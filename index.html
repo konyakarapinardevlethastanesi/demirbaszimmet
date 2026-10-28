@@ -281,7 +281,12 @@
                     </div>
                 </div>
             </section>
-
+            
+            <!-- ZİMMET GEÇMİŞİ ARAMA ÇUBUĞU -->
+            <div class="mb-4">
+            <input type="text" id="historySearchInput" oninput="renderHistoryTable()" placeholder="Künye no, cihaz adı, işlem veya personel ara..." class="w-full p-3 border rounded-xl text-xs bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+        </div>
+            
             <!-- ==================== TAB 3: QR ETİKET ÜRETİCİSİ (6x1 cm) ==================== -->
             <section id="qrprint-tab" class="admin-tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 max-w-lg mx-auto flex flex-col items-center justify-center space-y-4">
@@ -511,12 +516,25 @@
         }
 
         function renderHistoryTable() {
+            const query = document.getElementById("historySearchInput") ? document.getElementById("historySearchInput").value.toLowerCase() : "";
             const tbody = document.getElementById("historyTableBody");
+            
             if (!globalHistory || globalHistory.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Arşiv kaydı bulunamadı.</td></tr>`;
                 return;
             }
-            tbody.innerHTML = globalHistory.map(h => `
+
+            let filtered = globalHistory.filter(h => {
+                const text = `${h.kunye || h.col2} ${h.cihazAdi || h.col3} ${h.islem || h.col4} ${h.personel || h.col5}`.toLowerCase();
+                return text.includes(query);
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Aranan kritere uygun arşiv kaydı bulunamadı.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(h => `
                 <tr class="hover:bg-slate-50 border-b border-slate-100">
                     <td class="p-3 font-mono text-slate-500">${new Date(h.timestamp || h.col1).toLocaleString('tr-TR')}</td>
                     <td class="p-3 font-mono font-bold">${h.kunye || h.col2}</td>
