@@ -616,8 +616,8 @@
             const display = document.getElementById('qrcodeDisplay');
             display.innerHTML = "";
             
-            // GitHub Pages Mobil Sorgu Linki
-            const mobileUrl = `https://karapinardevlethastanesi.github.io/zimmet/mobil.html?kunye=${kunye}`;
+            // Doğru GitHub Pages Mobil Sorgu Linki
+            const mobileUrl = `https://konyakarapinardevlethastanesi.github.io/demirbaszimmet/mobil?kunye=${kunye}`;
             new QRCode(display, { text: mobileUrl, width: 75, height: 75, colorDark: "#0f172a", colorLight: "#ffffff" });
         }
 
@@ -629,8 +629,8 @@
             // 6 cm x 1 cm Yatay Dikdörtgen Ultra HD Canvas (Scale: 4x)
             const scale = 4;
             const canvas = document.createElement('canvas');
-            canvas.width = 600 * scale;   // 6 cm oranına denk genişlik
-            canvas.height = 100 * scale;  // 1 cm oranına denk yükseklik
+            canvas.width = 600 * scale;   
+            canvas.height = 100 * scale;  
             const ctx = canvas.getContext('2d');
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
@@ -661,9 +661,9 @@
             ctx.font = `bold ${7 * scale}px Inter, sans-serif`;
             ctx.fillText(`Birim: ${device.birim || device.col5}`, 14 * scale, 82 * scale);
 
-            // Sağ Taraf: QR Kod Çizimi
+            // Sağ Taraf: Doğru Link ile QR Kod Çizimi
             const tempDiv = document.createElement('div');
-            const qrUrl = `https://karapinardevlethastanesi.github.io/zimmet/mobil.html?kunye=${kunye}`;
+            const qrUrl = `https://konyakarapinardevlethastanesi.github.io/demirbaszimmet/mobil?kunye=${kunye}`;
             const qr = new QRCode(tempDiv, {
                 text: qrUrl,
                 width: 76 * scale, height: 76 * scale
