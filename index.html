@@ -283,26 +283,38 @@
             </section>
             
             <!-- ZİMMET GEÇMİŞİ ARAMA ÇUBUĞU -->
-            <div class="mb-4">
-            <input type="text" id="historySearchInput" oninput="renderHistoryTable()" placeholder="Künye no, cihaz adı, işlem veya personel ara..." class="w-full p-3 border rounded-xl text-xs bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
-        </div>
-            
-            <!-- ==================== TAB 3: QR ETİKET ÜRETİCİSİ (6x1 cm) ==================== -->
-            <section id="qrprint-tab" class="admin-tab-content hidden space-y-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 max-w-lg mx-auto flex flex-col items-center justify-center space-y-4">
-                    <div class="w-full text-left border-b border-slate-100 pb-2">
-                        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-print text-red-600"></i> Cihaz Etiketi Yazdır / İndir (6x1 cm)
-                        </h2>
-                        <p class="text-[11px] text-slate-400">Cihaz arkasındaki şeritler için yatay etiket önizlemesi</p>
-                    </div>
+           <div id="history-tab" class="admin-tab-content hidden space-y-4">
+    <div class="flex justify-between items-center">
+        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-blue-600"></i> Zimmet Hareketleri ve İşlem Geçmişi
+        </h2>
+    </div>
 
-                    <div class="w-full">
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Cihaz Seçiniz</label>
-                        <select id="printDeviceSelect" onchange="updateQrPreview()" class="w-full p-2.5 border border-slate-300 rounded-xl text-xs bg-slate-50 font-semibold text-slate-800">
-                            <option value="">Önce cihaz seçin...</option>
-                        </select>
-                    </div>
+    <!-- Arama Çubuğu En Üstte -->
+    <div>
+        <input type="text" id="historySearchInput" oninput="renderHistoryTable()" placeholder="Künye no, cihaz adı, işlem veya personel ara..." class="w-full p-3 border rounded-xl text-xs bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+    </div>
+
+    <!-- Geçmiş Tablosu -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+                <thead class="bg-slate-100 text-slate-700 uppercase font-bold text-[10px]">
+                    <tr>
+                        <th class="p-3">Tarih / Saat</th>
+                        <th class="p-3">Künye No</th>
+                        <th class="p-3">Cihaz Adı</th>
+                        <th class="p-3">İşlem Türü</th>
+                        <th class="p-3">Personel</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                    <!-- Dinamik dolacak -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
                     <!-- 6x1 cm Orantılı Görsel Önizleme Alanı -->
                     <div id="printTargetCard" class="border-2 border-dashed border-slate-300 rounded-xl bg-white shadow-sm overflow-hidden">
