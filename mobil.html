@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cihaz Zimmet Bilgi Kartı - Konya Karapınar Devlet Hastanesi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden">
+
+    <!-- HAREKETLİ ARKA PLAN (Giriş Portalının Aynısı - Ambiyans Işıklı) -->
+    <canvas id="animatedPortalBg" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
+    
+    <!-- YUMUŞAK AMBİYANS IŞIKLARI -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-red-600/20 rounded-full blur-3xl pointer-events-none z-0"></div>
+    <div class="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 w-80 h-80 bg-blue-600/15 rounded-full blur-3xl pointer-events-none z-0"></div>
+
+    <!-- ANA İÇERİK KARTI -->
+    <div class="max-w-md w-full relative z-10 space-y-4 my-auto">
+        
+        <!-- ÜST KURUMSAL BAŞLIK -->
+        <div class="text-center space-y-1.5">
+            <div class="w-[72px] h-[72px] flex items-center justify-center p-1 mx-auto drop-shadow-xl">
+                <img src="logo.png" alt="Sağlık Bakanlığı Logo" class="w-full h-full object-contain filter drop-shadow">
+            </div>
+            <div class="text-[11px] font-bold tracking-widest text-red-500 uppercase">T.C. Sağlık Bakanlığı</div>
+            <div class="text-[11px] font-semibold text-slate-300">Konya İl Sağlık Müdürlüğü</div>
+            <h1 class="text-base font-black text-white">Konya Karapınar Devlet Hastanesi</h1>
+            <p class="text-[10px] text-slate-400">Resmi Demirbaş / Cihaz Zimmet Bilgi Kartı</p>
+        </div>
+
+        <!-- BİLGİ KARTI (Glassmorphism) -->
+        <div class="bg-white/95 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-slate-200/80 text-slate-800 space-y-4">
+            
+            <div id="loadingState" class="text-center py-8 space-y-3">
+                <i class="fa-solid fa-spinner fa-spin text-2xl text-red-600"></i>
+                <p class="text-xs font-semibold text-slate-600">Cihaz bilgileri Google Sheets'ten sorgulanıyor...</p>
+            </div>
+
+            <div id="errorState" class="hidden text-center py-8 space-y-3">
+                <i class="fa-solid fa-triangle-exclamation text-3xl text-rose-500"></i>
+                <p class="text-xs font-bold text-slate-800">Cihaz Kaydı Bulunamadı!</p>
+                <p class="text-[11px] text-slate-500">Bu QR koda ait künye sistemde kayıtlı değil veya geçersiz.</p>
+            </div>
+
+            <!-- BAŞARILI VERİ GÖSTERİMİ -->
+            <div id="deviceCardContent" class="hidden space-y-3.5">
+                
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase text-slate-400">Künye Numarası</span>
+                        <div id="resKunye" class="text-sm font-mono font-extrabold text-slate-900">-</div>
+                    </div>
+                    <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-bold text-[10px] rounded-full flex items-center gap-1">
+                        <i class="fa-solid fa-circle-check text-[9px]"></i> Aktif Zimmet
+                    </span>
+                </div>
+
+                <div class="space-y-2.5 text-xs">
+                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                        <span class="text-slate-500 font-semibold"><i class="fa-solid fa-laptop-medical text-red-600 w-5"></i> Cihaz Adı:</span>
+                        <span id="resCihazAdi" class="font-bold text-slate-900 text-right">-</span>
+                    </div>
+
+                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                        <span class="text-slate-500 font-semibold"><i class="fa-solid fa-tag text-red-600 w-5"></i> Marka / Model:</span>
+                        <span id="resMarkaModel" class="font-bold text-slate-900 text-right">-</span>
+                    </div>
+
+                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                        <span class="text-slate-500 font-semibold"><i class="fa-solid fa-barcode text-red-600 w-5"></i> Seri Numarası:</span>
+                        <span id="resSeriNo" class="font-mono font-bold text-slate-900 text-right">-</span>
+                    </div>
+
+                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                        <span class="text-slate-500 font-semibold"><i class="fa-solid fa-door-open text-red-600 w-5"></i> Bulunduğu Birim:</span>
+                        <span id="resBirim" class="font-bold text-slate-900 text-right">-</span>
+                    </div>
+                </div>
+
+                <!-- ZİMMETLİ PERSONEL ÖZEL ALANI -->
+                <div class="bg-red-50 border border-red-200 rounded-xl p-3.5 text-center space-y-1">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-red-600">Zimmetli Olan Personel</div>
+                    <div id="resPersonel" class="text-sm font-extrabold text-slate-900">-</div>
+                </div>
+
+                <div class="text-center pt-1">
+                    <span id="resTarih" class="text-[10px] text-slate-400 font-mono">Son Güncelleme: --/--/----</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <p class="text-center text-[10px] text-slate-500">Karapınar Devlet Hastanesi Bilgi İşlem Birimi</p>
+    </div>
+
+    <!-- ARKA PLAN ANİMASYON SCRIPTİ -->
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbygz_tvIoxfziUITJDqzyypreETKUNp2o6ANTW0TVsyEf4j32G_uDXa6Ogu0O0wiwd9/exec";
+
+        // Arka plan animasyonu
+        (function initPortalAnimation() {
+            const canvas = document.getElementById('animatedPortalBg');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            const particles = [];
+            const particleCount = Math.floor(Math.min(width, height) / 12);
+            const types = ['star', 'plus', 'dot', 'shield'];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width, y: Math.random() * height,
+                    size: Math.random() * 3 + 1.5,
+                    speedX: (Math.random() - 0.5) * 0.4,
+                    speedY: -Math.random() * 0.6 - 0.2,
+                    type: types[Math.floor(Math.random() * types.length)],
+                    opacity: Math.random() * 0.6 + 0.2,
+                    pulseSpeed: Math.random() * 0.02 + 0.005,
+                    angle: Math.random() * Math.PI * 2
+                });
+            }
+            function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+                let rot = Math.PI / 2 * 3, x = cx, y = cy, step = Math.PI / spikes;
+                ctx.beginPath(); ctx.moveTo(cx, cy - outerRadius);
+                for (let i = 0; i < spikes; i++) {
+                    x = cx + Math.cos(rot) * outerRadius; y = cy + Math.sin(rot) * outerRadius; ctx.lineTo(x, y); rot += step;
+                    x = cx + Math.cos(rot) * innerRadius; y = cy + Math.sin(rot) * innerRadius; ctx.lineTo(x, y); rot += step;
+                }
+                ctx.lineTo(cx, cy - outerRadius); ctx.closePath(); ctx.fill();
+            }
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => {
+                    p.x += p.speedX; p.y += p.speedY; p.opacity += Math.sin(p.angle) * 0.005; p.angle += p.pulseSpeed;
+                    if (p.y < -20) p.y = height + 20;
+                    if (p.x < -20) p.x = width + 20;
+                    if (p.x > width + 20) p.x = -20;
+                    ctx.save();
+                    ctx.globalAlpha = Math.max(0.1, Math.min(0.8, p.opacity));
+                    ctx.fillStyle = p.type === 'plus' ? '#f87171' : '#94a3b8';
+                    if (p.type === 'star') { drawStar(ctx, p.x, p.y, 4, p.size * 2, p.size); }
+                    else if (p.type === 'plus') {
+                        ctx.fillRect(p.x - p.size, p.y - p.size / 3, p.size * 2, p.size / 1.5);
+                        ctx.fillRect(p.x - p.size / 3, p.y - p.size, p.size / 1.5, p.size * 2);
+                    } else if (p.type === 'shield') {
+                        ctx.font = `${p.size * 3}px "Font Awesome 6 Free"`; ctx.fillText("🛡", p.x, p.y);
+                    } else {
+                        ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+                    }
+                    ctx.restore();
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        })();
+
+        // URL'den künye parametresini alıp Google Sheets'ten cihazı sorgulama
+        async function fetchDeviceDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const kunye = urlParams.get('kunye');
+
+            if (!kunye) {
+                showError();
+                return;
+            }
+
+            try {
+                const res = await fetch(API_URL + "?sheet=ZimmetDB");
+                const devices = await res.json();
+                
+                const device = devices.find(d => (d.kunye || d.col1) === kunye);
+
+                if (!device) {
+                    showError();
+                    return;
+                }
+
+                // Bilgileri ekrana bas
+                document.getElementById('resKunye').innerText = kunye;
+                document.getElementById('resCihazAdi').innerText = device.cihazAdi || device.col2 || '-';
+                document.getElementById('resMarkaModel').innerText = device.markaModel || device.col3 || '-';
+                document.getElementById('resSeriNo').innerText = device.seriNo || device.col4 || '-';
+                document.getElementById('resBirim').innerText = device.birim || device.col5 || '-';
+                document.getElementById('resPersonel').innerText = device.personel || device.col6 || '-';
+                
+                if (device.timestamp || device.col7) {
+                    document.getElementById('resTarih').innerText = "Kayıt / Güncelleme: " + new Date(device.timestamp || device.col7).toLocaleString('tr-TR');
+                }
+
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('deviceCardContent').classList.remove('hidden');
+
+            } catch (e) {
+                console.error(e);
+                showError();
+            }
+        }
+
+        function showError() {
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+        }
+
+        window.addEventListener('DOMContentLoaded', fetchDeviceDetails);
+    </script>
+</body>
+</html>
