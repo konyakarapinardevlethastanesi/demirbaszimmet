@@ -23,17 +23,38 @@
             background: white !important;
         }
 
+        /* Baskı CSS Ayarları */
         @media print {
             body * { visibility: hidden !important; }
-            #printTargetCard, #printTargetCard * { visibility: visible !important; }
-            #printTargetCard {
-                position: absolute !important;
-                left: 50% !important; top: 50% !important;
-                transform: translate(-50%, -50%) !important;
-                border: none !important; box-shadow: none !important;
-                width: 6cm !important; height: 1cm !important; background: white !important;
-            }
             .no-print { display: none !important; }
+
+            /* A4 Envanter Listesi Yazdırma Modu */
+            body.print-inventory-mode #a4PrintArea, 
+            body.print-inventory-mode #a4PrintArea * { 
+                visibility: visible !important; 
+            }
+            body.print-inventory-mode #a4PrintArea { 
+                position: absolute !important; 
+                left: 0 !important; top: 0 !important; 
+                width: 100% !important; 
+                padding: 15mm !important; 
+            }
+
+            /* QR Etiket Yazdırma Modu */
+            body.print-qr-mode #qrPrintBatchArea, 
+            body.print-qr-mode #qrPrintBatchArea * { 
+                visibility: visible !important; 
+            }
+            body.print-qr-mode #qrPrintBatchArea { 
+                position: absolute !important; 
+                left: 0 !important; top: 0 !important; 
+                width: 100% !important; 
+            }
+
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
         }
     </style>
 </head>
@@ -41,16 +62,11 @@
 
     <!-- ==================== 1. HAREKETLİ GİRİŞ PORTALI ==================== -->
     <div id="mainAuthPortal" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4 overflow-hidden select-none">
-
-        <!-- HAREKETLİ ARKA PLAN (Canvas Animasyonu) -->
         <canvas id="animatedPortalBg" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
-
-        <!-- YUMUŞAK AMBİYANS IŞIKLARI -->
         <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/15 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="max-w-md w-full space-y-5 my-auto relative z-10">
-
             <div class="text-center space-y-2">
                 <div class="w-[88px] h-[88px] flex items-center justify-center p-1 mx-auto drop-shadow-2xl">
                     <img src="logo.png" alt="Sağlık Bakanlığı Logo" class="w-full h-full object-contain filter drop-shadow-lg">
@@ -175,23 +191,23 @@
             <!-- SEKMELER -->
             <div class="flex space-x-2 border-b border-slate-200 pb-2 overflow-x-auto no-print">
                 <button onclick="switchAdminTab('devices-tab')" id="tab-btn-devices" class="tab-btn px-4 py-2.5 rounded-lg text-xs sm:text-sm font-bold bg-slate-900 text-white shadow-sm transition flex items-center space-x-2">
-                    <i class="fa-solid fa-laptop-medical"></i><span>1. Cihaz & Zimmet Listesi</span>
+                    <i class="fa-solid fa-boxes-stacked"></i><span>1. Envanter Cihaz Kayıtları</span>
                 </button>
                 <button onclick="switchAdminTab('history-tab')" id="tab-btn-history" class="tab-btn px-4 py-2.5 rounded-lg text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-200 transition flex items-center space-x-2">
                     <i class="fa-solid fa-clock-rotate-left"></i><span>2. Zimmet Geçmişi / Arşiv</span>
                 </button>
                 <button onclick="switchAdminTab('qrprint-tab')" id="tab-btn-qrprint" class="tab-btn px-4 py-2.5 rounded-lg text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-200 transition flex items-center space-x-2">
-                    <i class="fa-solid fa-qrcode"></i><span>3. QR Etiket Üreticisi (6x1 cm)</span>
+                    <i class="fa-solid fa-qrcode"></i><span>3. QR Etiket Üreticisi & Toplu Yazdır</span>
                 </button>
             </div>
 
-            <!-- ==================== TAB 1: CİHAZ & ZİMMET LİSTESİ ==================== -->
+            <!-- ==================== TAB 1: ENVANTER CİHAZ KAYITLARI ==================== -->
             <section id="devices-tab" class="admin-tab-content block space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <!-- Yeni Cihaz / Zimmet Ekleme Formu -->
+                    <!-- Yeni Cihaz / Envanter Ekleme Formu -->
                     <div class="lg:col-span-4 bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4 no-print">
                         <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-plus-circle text-red-600"></i> Yeni Cihaz / Zimmet Ekle
+                            <i class="fa-solid fa-plus-circle text-red-600"></i> Yeni Cihaz / Envanter Ekle
                         </h2>
                         <form onsubmit="addNewDevice(event)" class="space-y-3">
                             <div>
@@ -212,28 +228,49 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Bulunduğu Birim / Oda <span class="text-rose-500">*</span></label>
-                                <input type="text" id="newBirim" required placeholder="Örn: Acil Servis / 2 Nolu Poliklinik" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                <input type="text" id="newBirim" required placeholder="Örn: Acil Servis / Ayniyat Deposu" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Zimmetli Personel (Adı Soyadı) <span class="text-rose-500">*</span></label>
-                                <input type="text" id="newPersonel" required placeholder="Örn: Dr. Ahmet Yılmaz" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Cihaz Durumu</label>
+                                <select id="newDurum" class="w-full p-2 border border-slate-300 rounded-lg text-xs font-bold text-slate-800">
+                                    <option value="Aktif">🟢 Aktif / Kullanımda</option>
+                                    <option value="Bakımda">🟡 Bakımda / Onarımda</option>
+                                    <option value="Hurda">🔴 Hurda / Hek</option>
+                                </select>
                             </div>
                             <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 transition shadow">
-                                <i class="fa-solid fa-floppy-disk"></i> Cihazı Kaydet ve Zimmetle
+                                <i class="fa-solid fa-floppy-disk"></i> Envantere Kaydet
                             </button>
                         </form>
                     </div>
 
-                    <!-- Cihaz Listesi ve Arama -->
+                    <!-- Cihaz Listesi, Arama ve Filtreleme -->
                     <div class="lg:col-span-8 bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
                         <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                            <div class="relative w-full sm:w-72">
+                            <!-- Arama Kutusu -->
+                            <div class="relative w-full sm:w-64">
                                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                                <input type="text" id="deviceSearchInput" oninput="renderDevicesTable()" placeholder="Künye, personel, birim ara..." class="w-full pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:outline-none">
+                                <input type="text" id="deviceSearchInput" oninput="renderDevicesTable()" placeholder="Künye, cihaz, personel, birim ara..." class="w-full pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:outline-none">
                             </div>
-                            <button onclick="loadDevicesFromSheets()" class="text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition shadow-sm">
-                                <i class="fa-solid fa-arrows-rotate"></i> Yenile
-                            </button>
+
+                            <!-- Filtre Seçeneği -->
+                            <div class="flex items-center gap-2 w-full sm:w-auto">
+                                <select id="deviceStatusFilter" onchange="renderDevicesTable()" class="p-1.5 border border-slate-300 rounded-lg text-xs font-semibold bg-white text-slate-700">
+                                    <option value="ALL">Tüm Durumlar</option>
+                                    <option value="ZIMMETLI">🔵 Sadece Zimmetliler</option>
+                                    <option value="ZIMMETSIZ">⚪ Zimmetsiz (Depodakiler)</option>
+                                    <option value="Aktif">🟢 Aktif Cihazlar</option>
+                                    <option value="Bakımda">🟡 Bakımdakiler</option>
+                                    <option value="Hurda">🔴 Hurda / Hek</option>
+                                </select>
+
+                                <button onclick="printInventoryA4List()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition shadow-sm whitespace-nowrap">
+                                    <i class="fa-solid fa-print"></i> A4 Liste Yazdır
+                                </button>
+                                <button onclick="loadDevicesFromSheets()" class="text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition shadow-sm">
+                                    <i class="fa-solid fa-arrows-rotate"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="overflow-x-auto max-h-[500px]">
@@ -243,6 +280,7 @@
                                         <th class="p-3">Künye / Cihaz</th>
                                         <th class="p-3">Model / Seri No</th>
                                         <th class="p-3">Birim / Oda</th>
+                                        <th class="p-3">Cihaz Durumu</th>
                                         <th class="p-3">Zimmetli Personel</th>
                                         <th class="p-3 text-center">İşlemler</th>
                                     </tr>
@@ -266,7 +304,7 @@
                         </button>
                     </div>
 
-                    <!-- ZİMMET GEÇMİŞİ ARAMA ÇUBUĞU (Tablo Üstü) -->
+                    <!-- ZİMMET GEÇMİŞİ ARAMA ÇUBUĞU -->
                     <div class="relative w-full">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                         <input type="text" id="historySearchInput" oninput="renderHistoryTable()" placeholder="Künye no, cihaz adı, işlem veya personel ara..." class="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none">
@@ -289,59 +327,124 @@
                 </div>
             </section>
 
-            <!-- ==================== TAB 3: QR ETİKET ÜRETİCİSİ (6x1 cm) ==================== -->
+            <!-- ==================== TAB 3: QR ETİKET ÜRETİCİSİ & TOPLU YAZDIR ==================== -->
             <section id="qrprint-tab" class="admin-tab-content hidden space-y-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 max-w-lg mx-auto flex flex-col items-center justify-center space-y-4">
-                    <div class="w-full text-left border-b border-slate-100 pb-2">
-                        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-print text-red-600"></i> Cihaz Etiketi Yazdır / İndir (6x1 cm)
-                        </h2>
-                        <p class="text-[11px] text-slate-400">Cihaz arkasındaki şeritler için yatay etiket önizlemesi</p>
-                    </div>
-
-                    <div class="w-full">
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Cihaz Seçiniz</label>
-                        <select id="printDeviceSelect" onchange="updateQrPreview()" class="w-full p-2.5 border border-slate-300 rounded-xl text-xs bg-slate-50 font-semibold text-slate-800">
-                            <option value="">Önce cihaz seçin...</option>
-                        </select>
-                    </div>
-
-                    <!-- 6x1 cm Orantılı Görsel Önizleme Alanı -->
-                    <div id="printTargetCard" class="border-2 border-dashed border-slate-300 rounded-xl bg-white shadow-sm overflow-hidden">
-                        <div class="flex flex-col justify-center text-left space-y-0.5 overflow-hidden pr-2">
-                            <div class="text-[8px] font-bold text-red-600 uppercase tracking-tight">Karapınar Devlet Hastanesi</div>
-                            <div id="previewKunye" class="text-xs font-mono font-bold text-slate-900">KNY-000</div>
-                            <h3 id="previewCihazAdi" class="text-xs font-extrabold text-slate-800 truncate max-w-[220px]">Cihaz Adı</h3>
-                            <p id="previewBirim" class="text-[9px] text-slate-500 truncate max-w-[220px]">-</p>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Tekli Önizleme Kartı -->
+                    <div class="lg:col-span-5 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center space-y-4">
+                        <div class="w-full text-left border-b border-slate-100 pb-2">
+                            <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-print text-red-600"></i> Tekli Etiketi Önizle / İndir (6x1 cm)
+                            </h2>
                         </div>
-                        <div class="flex items-center justify-center bg-white p-0.5 shrink-0">
-                            <div id="qrcodeDisplay"></div>
+
+                        <div class="w-full">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Cihaz Seçiniz</label>
+                            <select id="printDeviceSelect" onchange="updateQrPreview()" class="w-full p-2.5 border border-slate-300 rounded-xl text-xs bg-slate-50 font-semibold text-slate-800">
+                                <option value="">Önce cihaz seçin...</option>
+                            </select>
                         </div>
+
+                        <!-- 6x1 cm Önizleme Kartı -->
+                        <div id="printTargetCard" class="border-2 border-dashed border-slate-300 rounded-xl bg-white shadow-sm overflow-hidden">
+                            <div class="flex flex-col justify-center text-left space-y-0.5 overflow-hidden pr-2">
+                                <div class="text-[8px] font-bold text-red-600 uppercase tracking-tight">Karapınar Devlet Hastanesi</div>
+                                <div id="previewKunye" class="text-xs font-mono font-bold text-slate-900">KNY-000</div>
+                                <h3 id="previewCihazAdi" class="text-xs font-extrabold text-slate-800 truncate max-w-[220px]">Cihaz Adı</h3>
+                                <p id="previewBirim" class="text-[9px] text-slate-500 truncate max-w-[220px]">-</p>
+                            </div>
+                            <div class="flex items-center justify-center bg-white p-0.5 shrink-0">
+                                <div id="qrcodeDisplay"></div>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="downloadCurrentPreviewDeviceQR()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 shadow">
+                            <i class="fa-solid fa-download"></i> 6x1 cm HD Resim İndir
+                        </button>
                     </div>
 
-                    <div class="flex items-center gap-2 w-full pt-2">
-                        <button type="button" onclick="window.print()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 shadow">
-                            <i class="fa-solid fa-print"></i> Yazdır
-                        </button>
-                        <button type="button" onclick="downloadCurrentPreviewDeviceQR()" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 shadow">
-                            <i class="fa-solid fa-download"></i> 6x1 cm Resim İndir
-                        </button>
+                    <!-- Otomatik Oluşan QR Listesi ve Toplu Yazdırma -->
+                    <div class="lg:col-span-7 bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                        <div class="flex justify-between items-center border-b pb-3">
+                            <div>
+                                <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                                    <i class="fa-solid fa-list-check text-indigo-600"></i> Otomatik Etiket Listesi
+                                </h2>
+                                <p class="text-[11px] text-slate-400">Tüm cihazların etiketleri otomatik hazırdır.</p>
+                            </div>
+                            <button onclick="printSelectedQRCodes()" class="py-2 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow">
+                                <i class="fa-solid fa-print"></i> Seçilenleri Toplu Yazdır
+                            </button>
+                        </div>
+
+                        <div class="overflow-x-auto max-h-[400px]">
+                            <table class="w-full text-left text-xs text-slate-600">
+                                <thead class="bg-slate-100 text-slate-700 font-bold uppercase sticky top-0">
+                                    <tr>
+                                        <th class="p-2"><input type="checkbox" id="selectAllQR" onchange="toggleSelectAllQR(this)"></th>
+                                        <th class="p-2">Künye No</th>
+                                        <th class="p-2">Cihaz Adı</th>
+                                        <th class="p-2">Birim / Zimmet</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="qrBatchTableBody" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- ZİMMET GÜNCELLEME MODALI -->
+    <!-- A4 RESMİ ENVANTER ÇIKTI ALANI (Yazdırırken görünür) -->
+    <div id="a4PrintArea" class="hidden">
+        <div class="text-center space-y-1 border-b-2 border-slate-900 pb-3 mb-4">
+            <h1 class="text-base font-bold tracking-wider">T.C. SAĞLIK BAKANLIĞI</h1>
+            <h2 class="text-sm font-semibold">Konya İl Sağlık Müdürlüğü</h2>
+            <h3 class="text-sm font-extrabold">Konya Karapınar Devlet Hastanesi Başhekimliği</h3>
+            <p class="text-xs font-bold underline mt-2">AYNİYAT TAŞINIR DEPOSUNA KAYITLI CİHAZLAR LİSTESİ</p>
+        </div>
+
+        <table class="w-full text-left text-[11px] border-collapse border border-slate-400 my-4">
+            <thead>
+                <tr class="bg-slate-200 text-slate-900 font-bold">
+                    <th class="border border-slate-400 p-2 text-center w-8">#</th>
+                    <th class="border border-slate-400 p-2">Künye No</th>
+                    <th class="border border-slate-400 p-2">Cihaz Adı / Türü</th>
+                    <th class="border border-slate-400 p-2">Marka / Model</th>
+                    <th class="border border-slate-400 p-2">Seri No</th>
+                    <th class="border border-slate-400 p-2">Bulunduğu Birim</th>
+                    <th class="border border-slate-400 p-2">Durum</th>
+                    <th class="border border-slate-400 p-2">Zimmetli Personel</th>
+                </tr>
+            </thead>
+            <tbody id="a4PrintTableBody"></tbody>
+        </table>
+
+        <!-- Sayfa Alt Bilgisi ve İmza Bloğu -->
+        <div class="mt-8 pt-4 border-t border-slate-300 flex justify-between items-end text-[10px] text-slate-700">
+            <div>
+                <p><strong>Rapor Tarihi:</strong> <span id="a4PrintDate">--/--/----</span></p>
+                <p>Karapınar Devlet Hastanesi Taşınır / Ayniyat Kayıt Birimi</p>
+            </div>
+            <div class="text-center space-y-8 pr-8">
+                <p class="font-bold">Teslim Eden / Onaylayan</p>
+                <p class="text-slate-400">İmza / Kaşe</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOPLU QR BSK ALANI (Yazdırırken görünür) -->
+    <div id="qrPrintBatchArea" class="hidden grid grid-cols-2 gap-4 p-4 bg-white"></div>
+
+    <!-- ZİMMET & CİHAZ DÜZENLEME MODALI -->
     <div id="editModal" class="fixed inset-0 bg-slate-900/80 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b pb-2">
-                <i class="fa-solid fa-user-pen text-blue-600"></i> Cihaz Zimmetini Değiştir / Düzenle
+                <i class="fa-solid fa-user-pen text-blue-600"></i> Cihaz ve Zimmet Düzenle
             </h3>
             <form onsubmit="saveEditedDevice(event)" class="space-y-3">
                 <input type="hidden" id="editDeviceId">
-                <input type="hidden" id="editMarkaModel">
-                <input type="hidden" id="editSeriNo">
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Künye Numarası</label>
@@ -351,17 +454,41 @@
                     <label class="block text-xs font-bold text-slate-700 mb-1">Cihaz Adı</label>
                     <input type="text" id="editCihazAdi" required class="w-full p-2 border rounded-lg text-xs">
                 </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Marka / Model</label>
+                        <input type="text" id="editMarkaModel" class="w-full p-2 border rounded-lg text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Seri No</label>
+                        <input type="text" id="editSeriNo" class="w-full p-2 border rounded-lg text-xs font-mono">
+                    </div>
+                </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Birim / Oda</label>
                     <input type="text" id="editBirim" required class="w-full p-2 border rounded-lg text-xs">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Yeni Zimmetli Personel <span class="text-rose-500">*</span></label>
-                    <input type="text" id="editPersonel" required class="w-full p-2 border rounded-lg text-xs font-bold text-red-600">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Cihaz Durumu</label>
+                    <select id="editDurum" class="w-full p-2 border rounded-lg text-xs font-bold">
+                        <option value="Aktif">🟢 Aktif / Kullanımda</option>
+                        <option value="Bakımda">🟡 Bakımda / Onarımda</option>
+                        <option value="Hurda">🔴 Hurda / Hek</option>
+                    </select>
                 </div>
-                <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold">İptal</button>
-                    <button type="submit" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold">Kaydet ve Güncelle</button>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Zimmetli Personel (Boş bırakılırsa zimmet düşer)</label>
+                    <input type="text" id="editPersonel" placeholder="Zimmetsiz (Depoda kalır)" class="w-full p-2 border rounded-lg text-xs font-bold text-blue-700">
+                </div>
+
+                <div class="flex justify-between items-center pt-2 border-t">
+                    <button type="button" onclick="removeFromInventory()" class="text-rose-600 hover:underline text-xs font-bold">
+                        <i class="fa-solid fa-trash-can mr-1"></i> Envanterden Düş
+                    </button>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="closeEditModal()" class="px-3 py-1.5 bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold">İptal</button>
+                        <button type="submit" class="px-3 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-semibold">Kaydet</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -426,6 +553,7 @@
                 globalDevices = await res.json();
                 renderDevicesTable();
                 populatePrintDropdown();
+                renderQRBatchTable();
             } catch (e) { console.error(e); }
         }
 
@@ -445,10 +573,11 @@
             const markaModel = document.getElementById("newMarkaModel").value.trim();
             const seriNo = document.getElementById("newSeriNo").value.trim();
             const birim = document.getElementById("newBirim").value.trim();
-            const personel = document.getElementById("newPersonel").value.trim();
+            const durum = document.getElementById("newDurum").value;
+            const personel = "Zimmetsiz (Depoda)";
             const timestamp = new Date().toISOString();
 
-            const row = [id, kunye, cihazAdi, markaModel, seriNo, birim, personel, timestamp];
+            const row = [id, kunye, cihazAdi, markaModel, seriNo, birim, personel, timestamp, durum];
 
             await fetch(API_URL, {
                 method: "POST",
@@ -457,7 +586,7 @@
 
             await fetch(API_URL, {
                 method: "POST",
-                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, cihazAdi, "Yeni Zimmet Kaydı", personel] })
+                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, cihazAdi, "Envantere Yeni Cihaz Ekledi", durum] })
             });
 
             document.getElementById("newKunye").value = "";
@@ -465,7 +594,6 @@
             document.getElementById("newMarkaModel").value = "";
             document.getElementById("newSeriNo").value = "";
             document.getElementById("newBirim").value = "";
-            document.getElementById("newPersonel").value = "";
 
             loadDevicesFromSheets();
             loadHistoryFromSheets();
@@ -473,15 +601,29 @@
 
         function renderDevicesTable() {
             const query = document.getElementById("deviceSearchInput") ? document.getElementById("deviceSearchInput").value.toLowerCase() : "";
+            const statusFilter = document.getElementById("deviceStatusFilter") ? document.getElementById("deviceStatusFilter").value : "ALL";
             const tbody = document.getElementById("devicesTableBody");
 
             let filtered = globalDevices.filter(d => {
-                const text = `${d.kunye || d.col1} ${d.cihazAdi || d.col2} ${d.personel || d.col6} ${d.birim || d.col5}`.toLowerCase();
-                return text.includes(query);
+                const kunye = d.kunye || d.col1 || '';
+                const cihaz = d.cihazAdi || d.col2 || '';
+                const personel = d.personel || d.col6 || '';
+                const birim = d.birim || d.col5 || '';
+                const durum = d.durum || d.col8 || 'Aktif';
+
+                const text = `${kunye} ${cihaz} ${personel} ${birim}`.toLowerCase();
+                const matchesQuery = text.includes(query);
+
+                let matchesFilter = true;
+                if (statusFilter === "ZIMMETLI") matchesFilter = personel && !personel.includes("Zimmetsiz");
+                else if (statusFilter === "ZIMMETSIZ") matchesFilter = !personel || personel.includes("Zimmetsiz");
+                else if (statusFilter !== "ALL") matchesFilter = durum === statusFilter;
+
+                return matchesQuery && matchesFilter;
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Kayıtlı cihaz bulunamadı.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">Kayıtlı cihaz bulunamadı.</td></tr>`;
                 return;
             }
 
@@ -492,7 +634,17 @@
                 const model = d.markaModel || d.col3;
                 const seri = d.seriNo || d.col4;
                 const birim = d.birim || d.col5;
-                const personel = d.personel || d.col6;
+                const personel = d.personel || d.col6 || 'Zimmetsiz (Depoda)';
+                const durum = d.durum || d.col8 || 'Aktif';
+
+                let durumBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">🟢 Aktif</span>`;
+                if (durum === "Bakımda") durumBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">🟡 Bakımda</span>`;
+                if (durum === "Hurda") durumBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">🔴 Hurda</span>`;
+
+                const isZimmetli = personel && !personel.includes("Zimmetsiz");
+                const personelBadge = isZimmetli 
+                    ? `<span class="font-bold text-red-600">${personel}</span>`
+                    : `<span class="text-slate-400 font-medium italic">Zimmetsiz (Depoda)</span>`;
 
                 return `
                     <tr class="hover:bg-slate-50 border-b border-slate-100">
@@ -505,10 +657,10 @@
                             <div class="font-mono text-[10px] text-slate-400">SN: ${seri || '-'}</div>
                         </td>
                         <td class="p-3 font-semibold text-slate-700">${birim}</td>
-                        <td class="p-3 font-bold text-red-600">${personel}</td>
+                        <td class="p-3">${durumBadge}</td>
+                        <td class="p-3">${personelBadge}</td>
                         <td class="p-3 text-center space-x-2">
-                            <button onclick="openEditModal('${id}')" class="text-blue-600 hover:underline font-semibold">Zimmet Değiştir</button>
-                            <button onclick="deleteDevice('${id}', '${kunye}')" class="text-rose-600 hover:underline font-semibold">Sil</button>
+                            <button onclick="openEditModal('${id}')" class="text-blue-600 hover:underline font-semibold">Düzenle / Zimmet</button>
                         </td>
                     </tr>
                 `;
@@ -552,11 +704,13 @@
             document.getElementById('editDeviceId').value = device.id || device.col0;
             document.getElementById('editKunye').value = device.kunye || device.col1 || '';
             document.getElementById('editCihazAdi').value = device.cihazAdi || device.col2 || '';
+            document.getElementById('editMarkaModel').value = device.markaModel || device.col3 || '';
+            document.getElementById('editSeriNo').value = device.seriNo || device.col4 || '';
             document.getElementById('editBirim').value = device.birim || device.col5 || '';
-            document.getElementById('editPersonel').value = device.personel || device.col6 || '';
-
-            if(document.getElementById('editMarkaModel')) document.getElementById('editMarkaModel').value = device.markaModel || device.col3 || '';
-            if(document.getElementById('editSeriNo')) document.getElementById('editSeriNo').value = device.seriNo || device.col4 || '';
+            
+            const currentPersonel = device.personel || device.col6 || '';
+            document.getElementById('editPersonel').value = currentPersonel.includes("Zimmetsiz") ? "" : currentPersonel;
+            document.getElementById('editDurum').value = device.durum || device.col8 || 'Aktif';
 
             document.getElementById('editModal').classList.remove('hidden');
         }
@@ -570,15 +724,16 @@
             const id = document.getElementById('editDeviceId').value;
             const kunye = document.getElementById('editKunye').value;
             const cihazAdi = document.getElementById('editCihazAdi').value;
+            const markaModel = document.getElementById('editMarkaModel').value;
+            const seriNo = document.getElementById('editSeriNo').value;
             const birim = document.getElementById('editBirim').value;
-            const personel = document.getElementById('editPersonel').value;
+            let personel = document.getElementById('editPersonel').value.trim();
+            if (!personel) personel = "Zimmetsiz (Depoda)";
 
-            const currentDevice = globalDevices.find(d => String(d.id || d.col0) === String(id)) || {};
-            const markaModel = (document.getElementById('editMarkaModel') && document.getElementById('editMarkaModel').value) || currentDevice.markaModel || currentDevice.col3 || '';
-            const seriNo = (document.getElementById('editSeriNo') && document.getElementById('editSeriNo').value) || currentDevice.seriNo || currentDevice.col4 || '';
-
+            const durum = document.getElementById('editDurum').value;
             const timestamp = new Date().toISOString();
-            const updatedRow = [id, kunye, cihazAdi, markaModel, seriNo, birim, personel, timestamp];
+
+            const updatedRow = [id, kunye, cihazAdi, markaModel, seriNo, birim, personel, timestamp, durum];
 
             await fetch(API_URL, {
                 method: "POST",
@@ -587,7 +742,7 @@
 
             await fetch(API_URL, {
                 method: "POST",
-                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, cihazAdi, "Zimmet Değiştirildi", personel] })
+                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, cihazAdi, "Cihaz / Zimmet Güncellendi", personel] })
             });
 
             closeEditModal();
@@ -595,15 +750,28 @@
             loadHistoryFromSheets();
         }
 
-        async function deleteDevice(id, kunye) {
-            if (!confirm("Bu cihaz kaydını silmek istediğinize emin misiniz?")) return;
-            if (!confirm("DİKKAT: İşlem kalıcıdır. Onaylıyor musunuz?")) return;
+        async function removeFromInventory() {
+            const id = document.getElementById('editDeviceId').value;
+            const kunye = document.getElementById('editKunye').value;
+            const cihazAdi = document.getElementById('editCihazAdi').value;
+
+            if (!confirm(`DİKKAT: ${kunye} künyeli cihaz kurum envanterinden çıkarılacak ve arşive alınacaktır. Onaylıyor musunuz?`)) return;
+
+            const timestamp = new Date().toISOString();
 
             await fetch(API_URL, {
                 method: "POST",
                 body: JSON.stringify({ action: "delete", sheet: "ZimmetDB", id: id })
             });
+
+            await fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, cihazAdi, "KURUM ENVANTERİNDEN AYRILDI", "Envanter Dışı"] })
+            });
+
+            closeEditModal();
             loadDevicesFromSheets();
+            loadHistoryFromSheets();
         }
 
         function populatePrintDropdown() {
@@ -616,6 +784,102 @@
                 options += `<option value="${kunye}">${kunye} - ${name}</option>`;
             });
             select.innerHTML = options;
+        }
+
+        function renderQRBatchTable() {
+            const tbody = document.getElementById("qrBatchTableBody");
+            if (!tbody) return;
+
+            if (globalDevices.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-400">QR etiket listesi boş.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = globalDevices.map(d => {
+                const kunye = d.kunye || d.col1;
+                const cihaz = d.cihazAdi || d.col2;
+                const birim = d.birim || d.col5;
+                const personel = d.personel || d.col6 || 'Zimmetsiz';
+
+                return `
+                    <tr class="hover:bg-slate-50 border-b">
+                        <td class="p-2"><input type="checkbox" class="qr-select-checkbox" value="${kunye}"></td>
+                        <td class="p-2 font-mono font-bold">${kunye}</td>
+                        <td class="p-2 font-semibold">${cihaz}</td>
+                        <td class="p-2 text-slate-500">${birim} | ${personel}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function toggleSelectAllQR(master) {
+            document.querySelectorAll('.qr-select-checkbox').forEach(cb => cb.checked = master.checked);
+        }
+
+        function printSelectedQRCodes() {
+            const selectedKunyes = Array.from(document.querySelectorAll('.qr-select-checkbox:checked')).map(cb => cb.value);
+            if (selectedKunyes.length === 0) return alert("Lütfen yazdırılacak cihazları seçin!");
+
+            const container = document.getElementById('qrPrintBatchArea');
+            container.innerHTML = "";
+
+            selectedKunyes.forEach(kunye => {
+                const device = globalDevices.find(d => (d.kunye || d.col1) === kunye);
+                if (!device) return;
+
+                const card = document.createElement('div');
+                card.className = "border border-slate-400 p-2 rounded flex justify-between items-center bg-white";
+                card.style.width = "6cm";
+                card.style.height = "1cm";
+
+                const mobileUrl = `https://konyakarapinardevlethastanesi.github.io/demirbaszimmet/mobil?kunye=${kunye}`;
+                
+                card.innerHTML = `
+                    <div class="text-left space-y-0.5 overflow-hidden">
+                        <div class="text-[7px] font-bold text-red-600 uppercase">Karapınar Devlet Hastanesi</div>
+                        <div class="text-[9px] font-mono font-bold">${kunye}</div>
+                        <div class="text-[9px] font-black truncate max-w-[140px]">${device.cihazAdi || device.col2}</div>
+                    </div>
+                    <div id="qr_batch_${kunye}"></div>
+                `;
+                container.appendChild(card);
+
+                setTimeout(() => {
+                    new QRCode(document.getElementById(`qr_batch_${kunye}`), { text: mobileUrl, width: 32, height: 32 });
+                }, 50);
+            });
+
+            document.body.classList.add('print-qr-mode');
+            setTimeout(() => {
+                window.print();
+                document.body.classList.remove('print-qr-mode');
+            }, 300);
+        }
+
+        function printInventoryA4List() {
+            const tbody = document.getElementById('a4PrintTableBody');
+            document.getElementById('a4PrintDate').innerText = new Date().toLocaleDateString('tr-TR');
+
+            if (globalDevices.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center">Kayıtlı cihaz bulunamadı.</td></tr>`;
+            } else {
+                tbody.innerHTML = globalDevices.map((d, index) => `
+                    <tr class="border-b border-slate-300">
+                        <td class="border border-slate-300 p-1.5 text-center font-bold">${index + 1}</td>
+                        <td class="border border-slate-300 p-1.5 font-mono font-bold">${d.kunye || d.col1}</td>
+                        <td class="border border-slate-300 p-1.5 font-semibold">${d.cihazAdi || d.col2}</td>
+                        <td class="border border-slate-300 p-1.5">${d.markaModel || d.col3 || '-'}</td>
+                        <td class="border border-slate-300 p-1.5 font-mono">${d.seriNo || d.col4 || '-'}</td>
+                        <td class="border border-slate-300 p-1.5">${d.birim || d.col5}</td>
+                        <td class="border border-slate-300 p-1.5">${d.durum || d.col8 || 'Aktif'}</td>
+                        <td class="border border-slate-300 p-1.5 font-bold">${d.personel || d.col6 || 'Zimmetsiz'}</td>
+                    </tr>
+                `).join('');
+            }
+
+            document.body.classList.add('print-inventory-mode');
+            window.print();
+            document.body.classList.remove('print-inventory-mode');
         }
 
         function updateQrPreview() {
