@@ -11,16 +11,15 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
 
-        /* 6cm x 1cm Yatay Etiket Önizleme Oranı */
-        #printTargetCard {
-            width: 100% !important;
-            max-width: 420px !important;
-            height: 90px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: space-between !important;
-            padding: 8px 12px !important;
-            background: white !important;
+        /* Resmi Sağlık Bakanlığı Etiket Şablonu CSS Stil Tanımları */
+        .official-tag-card {
+            width: 100%;
+            max-width: 520px;
+            background: #ffffff;
+            border: 2px solid #1e293b;
+            padding: 3px;
+            color: #0f172a;
+            box-sizing: border-box;
         }
 
         /* Baskı CSS Ayarları */
@@ -208,7 +207,7 @@
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 no-print">
                 <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Toplam Cihaz</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Toplam Envanter</p>
                         <h3 id="statTotal" class="text-lg font-black text-slate-900">0</h3>
                     </div>
                     <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-700">
@@ -247,52 +246,97 @@
             <!-- ==================== TAB 1: CİHAZ / ENVANTER KAYITLARI ==================== -->
             <section id="devices-tab" class="admin-tab-content block space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <!-- Cihaz Kayıt Formu -->
-                    <div class="lg:col-span-4 bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4 no-print">
-                        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-plus-circle text-red-600"></i> Yeni Cihaz Kaydı Ekle
+                    <!-- DETAYLI RESMİ CİHAZ KAYIT FORMU (Personel alanı yok) -->
+                    <div class="lg:col-span-5 bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4 no-print">
+                        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2 border-b pb-2">
+                            <i class="fa-solid fa-plus-circle text-red-600"></i> Yeni Taşınır / Cihaz Kaydı
                         </h2>
-                        <form onsubmit="addNewDevice(event)" class="space-y-3">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Künye Numarası <span class="text-rose-500">*</span></label>
-                                <input type="text" id="newKunye" required placeholder="Örn: KNY-2026-001" class="w-full p-2 border border-slate-300 rounded-lg text-xs font-mono">
+                        <form onsubmit="addNewDevice(event)" class="space-y-3 text-xs">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-0.5">Künye No <span class="text-rose-500">*</span></label>
+                                    <input type="text" id="newKunye" required placeholder="1015875568" class="w-full p-2 border border-slate-300 rounded-lg font-mono">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-0.5">Bütçe Türü</label>
+                                    <input type="text" id="newButceTuru" placeholder="GB" class="w-full p-2 border border-slate-300 rounded-lg">
+                                </div>
                             </div>
+
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Cihaz Adı / Türü <span class="text-rose-500">*</span></label>
-                                <input type="text" id="newCihazAdi" required placeholder="Örn: Monitör / Bilgisayar" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                <label class="block font-bold text-slate-700 mb-0.5">Malzeme Tanımı <span class="text-rose-500">*</span></label>
+                                <input type="text" id="newMalzemeTanimi" required placeholder="BİLGİSAYAR LED MONİTÖR 21,5 İNÇ" class="w-full p-2 border border-slate-300 rounded-lg uppercase font-semibold">
                             </div>
+
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-0.5">Marka</label>
+                                    <input type="text" id="newMarka" placeholder="FUJITSU" class="w-full p-2 border border-slate-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-0.5">Model</label>
+                                    <input type="text" id="newModel" placeholder="L22T 6" class="w-full p-2 border border-slate-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-0.5">Seri / IMEI No</label>
+                                    <input type="text" id="newSeriNo" placeholder="YV8U006338" class="w-full p-2 border border-slate-300 rounded-lg font-mono">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-0.5">Demirbaş No</label>
+                                    <input type="text" id="newDemirbasNo" placeholder="DMR-001" class="w-full p-2 border border-slate-300 rounded-lg font-mono">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-0.5">Sicil No</label>
+                                    <input type="text" id="newSicilNo" placeholder="255-02-01-..." class="w-full p-2 border border-slate-300 rounded-lg font-mono">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-0.5">Edinme Yılı</label>
+                                    <input type="text" id="newEdinmeYili" placeholder="2014" class="w-full p-2 border border-slate-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-0.5">Cihaz Durumu</label>
+                                    <select id="newDurum" class="w-full p-2 border border-slate-300 rounded-lg font-bold text-slate-800 bg-white">
+                                        <option value="Aktif">🟢 Aktif / Kullanımda</option>
+                                        <option value="Bakımda">🟡 Bakımda / Onarımda</option>
+                                        <option value="Hurda">🔴 Hurda / İmha</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-0.5">Tedarikçi Firma</label>
+                                    <input type="text" id="newTedarikci" placeholder="Firma Adı" class="w-full p-2 border border-slate-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-0.5">Tedarik Türü</label>
+                                    <input type="text" id="newTedarikTuru" placeholder="Satın Alma / Bağış" class="w-full p-2 border border-slate-300 rounded-lg">
+                                </div>
+                            </div>
+
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Marka / Model <span class="text-rose-500">*</span></label>
-                                <input type="text" id="newMarkaModel" required placeholder="Örn: Dell OptiPlex 3090" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                <label class="block font-bold text-slate-700 mb-0.5">Künye Açıklama</label>
+                                <textarea id="newAciklama" rows="2" placeholder="Ek açıklama ve notlar..." class="w-full p-2 border border-slate-300 rounded-lg"></textarea>
                             </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Seri Numarası</label>
-                                <input type="text" id="newSeriNo" placeholder="Örn: SN5489210" class="w-full p-2 border border-slate-300 rounded-lg text-xs font-mono">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Bulunduğu Birim / Oda <span class="text-rose-500">*</span></label>
-                                <input type="text" id="newBirim" required placeholder="Örn: Acil Servis / Ayniyat Deposu" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Cihaz Durumu</label>
-                                <select id="newDurum" class="w-full p-2 border border-slate-300 rounded-lg text-xs font-bold text-slate-800">
-                                    <option value="Aktif">🟢 Aktif / Kullanımda</option>
-                                    <option value="Bakımda">🟡 Bakımda / Onarımda</option>
-                                    <option value="Hurda">🔴 Hurda / İmha</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 transition shadow">
-                                <i class="fa-solid fa-floppy-disk"></i> Envantere Kaydet
+
+                            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 transition shadow">
+                                <i class="fa-solid fa-floppy-disk"></i> Envantere Kaydet (Depoya Al)
                             </button>
                         </form>
                     </div>
 
                     <!-- Envanter Cihaz Listesi ve A4 Yazdırma -->
-                    <div class="lg:col-span-8 bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="lg:col-span-7 bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
                         <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
                             <div class="relative w-full sm:w-64">
                                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                                <input type="text" id="deviceSearchInput" oninput="renderDevicesTable()" placeholder="Künye, cihaz, birim ara..." class="w-full pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:outline-none">
+                                <input type="text" id="deviceSearchInput" oninput="renderDevicesTable()" placeholder="Künye, malzeme, marka ara..." class="w-full pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:outline-none">
                             </div>
 
                             <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -312,18 +356,18 @@
                             </div>
                         </div>
 
-                        <div class="overflow-x-auto max-h-[500px]">
-                            <table class="w-full text-left text-xs text-slate-600">
-                                <thead class="bg-slate-100 text-slate-700 font-bold uppercase sticky top-0">
+                        <div class="overflow-x-auto max-h-[550px]">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead class="bg-slate-800 text-white font-bold uppercase sticky top-0 z-10">
                                     <tr>
-                                        <th class="p-3">Künye / Cihaz</th>
-                                        <th class="p-3">Model / Seri No</th>
-                                        <th class="p-3">Birim / Oda</th>
-                                        <th class="p-3">Durumu</th>
-                                        <th class="p-3 text-center">İşlemler</th>
+                                        <th class="p-3">Künye / Malzeme Tanımı</th>
+                                        <th class="p-3">Marka / Model / Seri</th>
+                                        <th class="p-3">Sicil / Bütçe</th>
+                                        <th class="p-3">Durum</th>
+                                        <th class="p-3 text-center">İşlem</th>
                                     </tr>
                                 </thead>
-                                <tbody id="devicesTableBody" class="divide-y divide-slate-100"></tbody>
+                                <tbody id="devicesTableBody" class="divide-y divide-slate-200"></tbody>
                             </table>
                         </div>
                     </div>
@@ -336,23 +380,32 @@
                     <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
                         <div>
                             <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                                <i class="fa-solid fa-user-check text-blue-600"></i> Personel Zimmet Atama ve Yönetim Paneli
+                                <i class="fa-solid fa-user-check text-blue-600"></i> Personel Zimmet Atama ve Birim Yönetimi
                             </h2>
-                            <p class="text-[11px] text-slate-400">Cihazları personele zimmetleyin veya boşa çıkarın.</p>
+                            <p class="text-[11px] text-slate-400">Cihazları personele zimmetleyin, yerini değiştirin veya depoya çekin.</p>
                         </div>
-                        <div class="relative w-full sm:w-72">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                            <input type="text" id="zimmetSearchInput" oninput="renderZimmetTable()" placeholder="Künye, cihaz veya personel ara..." class="w-full pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:outline-none">
+                        
+                        <!-- ZİMMET SEKMESİ ÖZEL FİLTRELERİ -->
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <select id="zimmetFilterSelect" onchange="renderZimmetTable()" class="p-1.5 border border-slate-300 rounded-lg text-xs font-semibold bg-slate-50 text-slate-800">
+                                <option value="ALL">Tüm Envanter</option>
+                                <option value="ZIMMETLI">🔵 Sadece Zimmetliler</option>
+                                <option value="ZIMMETSIZ">⚪ Zimmetsiz (Depodakiler)</option>
+                            </select>
+                            <div class="relative w-full sm:w-64">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" id="zimmetSearchInput" oninput="renderZimmetTable()" placeholder="Künye, malzeme veya personel ara..." class="w-full pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:outline-none">
+                            </div>
                         </div>
                     </div>
 
                     <div class="overflow-x-auto max-h-[500px]">
-                        <table class="w-full text-left text-xs text-slate-600">
-                            <thead class="bg-slate-100 text-slate-700 font-bold uppercase">
+                        <table class="w-full text-left text-xs text-slate-600 border-collapse">
+                            <thead class="bg-slate-100 text-slate-700 font-bold uppercase sticky top-0">
                                 <tr>
                                     <th class="p-3">Künye No</th>
-                                    <th class="p-3">Cihaz Adı / Model</th>
-                                    <th class="p-3">Birim / Oda</th>
+                                    <th class="p-3">Malzeme Tanımı</th>
+                                    <th class="p-3">Zimmet Yeri / Birim</th>
                                     <th class="p-3">Zimmetli Personel</th>
                                     <th class="p-3 text-center">Zimmet İşlemi</th>
                                 </tr>
@@ -377,7 +430,7 @@
 
                     <div class="relative w-full">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                        <input type="text" id="historySearchInput" oninput="renderHistoryTable()" placeholder="Künye no, cihaz adı, işlem veya personel ara..." class="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none">
+                        <input type="text" id="historySearchInput" oninput="renderHistoryTable()" placeholder="Künye no, malzeme, işlem veya personel ara..." class="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none">
                     </div>
 
                     <div class="overflow-x-auto max-h-[500px]">
@@ -386,7 +439,7 @@
                                 <tr>
                                     <th class="p-3">Tarih / Saat</th>
                                     <th class="p-3">Künye No</th>
-                                    <th class="p-3">Cihaz Adı</th>
+                                    <th class="p-3">Malzeme Tanımı</th>
                                     <th class="p-3">İşlem / Açıklama</th>
                                     <th class="p-3">İlgili Personel</th>
                                 </tr>
@@ -400,10 +453,11 @@
             <!-- ==================== TAB 4: QR ETİKET ÜRETİCİSİ & TOPLU YAZDIR ==================== -->
             <section id="qrprint-tab" class="admin-tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <div class="lg:col-span-5 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center space-y-4">
+                    <!-- BİREBİR RESMİ DÜZENDE ETİKET ÖNİZLEME KARTI -->
+                    <div class="lg:col-span-6 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center space-y-4">
                         <div class="w-full text-left border-b border-slate-100 pb-2">
                             <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                                <i class="fa-solid fa-print text-red-600"></i> Tekli Etiketi Önizle / İndir (6x1 cm)
+                                <i class="fa-solid fa-print text-red-600"></i> Resmi Demirbaş Etiketi Önizleme
                             </h2>
                         </div>
 
@@ -414,30 +468,71 @@
                             </select>
                         </div>
 
-                        <div id="printTargetCard" class="border-2 border-dashed border-slate-300 rounded-xl bg-white shadow-sm overflow-hidden">
-                            <div class="flex flex-col justify-center text-left space-y-0.5 overflow-hidden pr-2">
-                                <div class="text-[8px] font-bold text-red-600 uppercase tracking-tight">Karapınar Devlet Hastanesi</div>
-                                <div id="previewKunye" class="text-xs font-mono font-bold text-slate-900">KNY-000</div>
-                                <h3 id="previewCihazAdi" class="text-xs font-extrabold text-slate-800 truncate max-w-[220px]">Cihaz Adı</h3>
-                                <p id="previewBirim" class="text-[9px] text-slate-500 truncate max-w-[220px]">-</p>
-                            </div>
-                            <div class="flex items-center justify-center bg-white p-0.5 shrink-0">
-                                <div id="qrcodeDisplay"></div>
+                        <!-- BİREBİR RESİMDERİ ETİKET ŞABLONU -->
+                        <div id="printTargetCard" class="official-tag-card rounded shadow-sm overflow-hidden">
+                            <div class="border border-slate-900 flex flex-col bg-white">
+                                <!-- ÜST BANT -->
+                                <div class="bg-slate-800 text-white px-2 py-1 flex items-center justify-between border-b border-slate-900">
+                                    <div class="w-6 h-6 flex items-center justify-center shrink-0">
+                                        <img src="logo.png" alt="Logo" class="w-full h-full object-contain filter brightness-200">
+                                    </div>
+                                    <div class="text-center flex-grow leading-tight">
+                                        <div class="text-[10px] font-extrabold tracking-wider">T.C. SAĞLIK BAKANLIĞI</div>
+                                        <div class="text-[9px] font-bold text-slate-200">T.C. SAĞLIK BAKANLIĞI KARAPINAR DEVLET HASTANESİ</div>
+                                    </div>
+                                    <div class="w-6"></div>
+                                </div>
+
+                                <!-- GÖVDE GRID -->
+                                <div class="flex flex-row border-b border-slate-900">
+                                    <div class="flex-grow flex flex-col border-r border-slate-900">
+                                        <!-- MALZEME TANIMI -->
+                                        <div class="border-b border-slate-900 p-1.5 text-center bg-white">
+                                            <div id="previewMalzemeTanimi" class="text-sm font-black uppercase tracking-tight text-slate-900 leading-tight">
+                                                BİLGİSAYAR LED MONİTÖR 21,5 İNÇ
+                                            </div>
+                                        </div>
+
+                                        <!-- MARKA / MODEL / SERİ NO -->
+                                        <div class="flex border-b border-slate-900 text-[10px] text-center items-center min-h-[22px]">
+                                            <div id="previewMarka" class="w-[32%] border-r border-slate-900 font-extrabold p-0.5 truncate">FUJITSU</div>
+                                            <div id="previewModel" class="w-[38%] border-r border-slate-900 font-extrabold p-0.5 truncate">L22T 6</div>
+                                            <div id="previewSeriNo" class="w-[30%] font-extrabold font-mono p-0.5 truncate">YV8U006338</div>
+                                        </div>
+
+                                        <!-- BÜTÇE TÜRÜ / SİCİL NO -->
+                                        <div class="flex border-b border-slate-900 text-[10px] text-center items-center min-h-[22px]">
+                                            <div id="previewButceTuru" class="w-[25%] border-r border-slate-900 font-extrabold p-0.5">GB</div>
+                                            <div id="previewSicilNo" class="w-[75%] font-extrabold font-mono p-0.5 tracking-tighter truncate">255-02-01-01-01-03</div>
+                                        </div>
+
+                                        <!-- EDİNME YILI / KÜNYE NO -->
+                                        <div class="flex text-[11px] text-center items-center min-h-[24px]">
+                                            <div id="previewEdinmeYili" class="w-[25%] border-r border-slate-900 font-extrabold p-0.5">2014</div>
+                                            <div id="previewKunye" class="w-[75%] font-black text-xs font-mono p-0.5 tracking-wider">1015875568</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- QR KOD ALANI -->
+                                    <div class="w-[100px] shrink-0 flex items-center justify-center p-1 bg-white">
+                                        <div id="qrcodeDisplay"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <button type="button" onclick="downloadCurrentPreviewDeviceQR()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 shadow">
-                            <i class="fa-solid fa-download"></i> 6x1 cm HD Resim İndir
+                            <i class="fa-solid fa-download"></i> Etiketi HD İndir
                         </button>
                     </div>
 
-                    <div class="lg:col-span-7 bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="lg:col-span-6 bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
                         <div class="flex justify-between items-center border-b pb-3">
                             <div>
                                 <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
                                     <i class="fa-solid fa-list-check text-indigo-600"></i> Otomatik Etiket Listesi
                                 </h2>
-                                <p class="text-[11px] text-slate-400">Tüm cihazların etiketleri otomatik hazırdır.</p>
+                                <p class="text-[11px] text-slate-400">Seçilen cihazları resmi etiket formatında yazdırın.</p>
                             </div>
                             <button onclick="printSelectedQRCodes()" class="py-2 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow">
                                 <i class="fa-solid fa-print"></i> Seçilenleri Toplu Yazdır
@@ -450,8 +545,8 @@
                                     <tr>
                                         <th class="p-2"><input type="checkbox" id="selectAllQR" onchange="toggleSelectAllQR(this)"></th>
                                         <th class="p-2">Künye No</th>
-                                        <th class="p-2">Cihaz Adı</th>
-                                        <th class="p-2">Birim / Zimmet</th>
+                                        <th class="p-2">Malzeme Tanımı</th>
+                                        <th class="p-2">Marka / Model</th>
                                     </tr>
                                 </thead>
                                 <tbody id="qrBatchTableBody" class="divide-y divide-slate-100"></tbody>
@@ -475,14 +570,14 @@
         <table class="w-full text-left text-[11px] border-collapse border border-slate-400 my-4">
             <thead>
                 <tr class="bg-slate-200 text-slate-900 font-bold">
-                    <th class="border border-slate-400 p-2 text-center w-8">#</th>
-                    <th class="border border-slate-400 p-2">Künye No</th>
-                    <th class="border border-slate-400 p-2">Cihaz Adı / Türü</th>
-                    <th class="border border-slate-400 p-2">Marka / Model</th>
-                    <th class="border border-slate-400 p-2">Seri No</th>
-                    <th class="border border-slate-400 p-2">Bulunduğu Birim</th>
-                    <th class="border border-slate-400 p-2">Durum</th>
-                    <th class="border border-slate-400 p-2">Zimmetli Personel</th>
+                    <th class="border border-slate-400 p-1.5 text-center w-8">#</th>
+                    <th class="border border-slate-400 p-1.5">Künye No</th>
+                    <th class="border border-slate-400 p-1.5">Malzeme Tanımı</th>
+                    <th class="border border-slate-400 p-1.5">Marka / Model</th>
+                    <th class="border border-slate-400 p-1.5">Seri No</th>
+                    <th class="border border-slate-400 p-1.5">Zimmet Yeri / Birim</th>
+                    <th class="border border-slate-400 p-1.5">Durum</th>
+                    <th class="border border-slate-400 p-1.5">Zimmetli Personel</th>
                 </tr>
             </thead>
             <tbody id="a4PrintTableBody"></tbody>
@@ -503,68 +598,57 @@
     <!-- TOPLU QR BASKI ALANI -->
     <div id="qrPrintBatchArea" class="hidden grid grid-cols-2 gap-4 p-4 bg-white"></div>
 
-    <!-- ZİMMET & CİHAZ DÜZENLEME / ATAMA MODALI -->
+    <!-- ZİMMET ATAMA & DÜZENLEME MODALI -->
     <div id="editModal" class="fixed inset-0 bg-slate-900/80 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b pb-2">
-                <i class="fa-solid fa-user-pen text-blue-600"></i> Cihaz ve Zimmet Düzenle
+                <i class="fa-solid fa-user-pen text-blue-600"></i> Zimmet & Birim Düzenle
             </h3>
             <form onsubmit="saveEditedDevice(event)" class="space-y-3">
                 <input type="hidden" id="editDeviceId">
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Künye Numarası</label>
-                    <input type="text" id="editKunye" disabled class="w-full p-2 border bg-slate-100 rounded-lg text-xs font-mono">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Cihaz Adı</label>
-                    <input type="text" id="editCihazAdi" required class="w-full p-2 border rounded-lg text-xs">
-                </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Marka / Model</label>
-                        <input type="text" id="editMarkaModel" class="w-full p-2 border rounded-lg text-xs">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Künye No</label>
+                        <input type="text" id="editKunye" disabled class="w-full p-2 border bg-slate-100 rounded-lg text-xs font-mono">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Seri No</label>
-                        <input type="text" id="editSeriNo" class="w-full p-2 border rounded-lg text-xs font-mono">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Cihaz Durumu</label>
+                        <select id="editDurum" class="w-full p-2 border rounded-lg text-xs font-bold">
+                            <option value="Aktif">🟢 Aktif / Kullanımda</option>
+                            <option value="Bakımda">🟡 Bakımda / Onarımda</option>
+                            <option value="Hurda">🔴 Hurda / İmha</option>
+                        </select>
                     </div>
                 </div>
+
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Birim / Oda</label>
-                    <input type="text" id="editBirim" required class="w-full p-2 border rounded-lg text-xs">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Malzeme Tanımı</label>
+                    <input type="text" id="editMalzemeTanimi" required class="w-full p-2 border rounded-lg text-xs font-bold">
                 </div>
+
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Cihaz Durumu</label>
-                    <select id="editDurum" class="w-full p-2 border rounded-lg text-xs font-bold">
-                        <option value="Aktif">🟢 Aktif / Kullanımda</option>
-                        <option value="Bakımda">🟡 Bakımda / Onarımda</option>
-                        <option value="Hurda">🔴 Hurda / İmha</option>
-                    </select>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Zimmet Yeri / Bulunduğu Birim <span class="text-rose-500">*</span></label>
+                    <input type="text" id="editBirim" required placeholder="Örn: Acil Servis / Poliklinik 1" class="w-full p-2 border rounded-lg text-xs font-semibold">
                 </div>
+
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Zimmetli Personel (Boş bırakılırsa depoya alınır)</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Zimmet Edilecek Personel (Boşsa depoda kalır)</label>
                     <input type="text" id="editPersonel" placeholder="Örn: Dr. Ahmet Yılmaz" class="w-full p-2 border rounded-lg text-xs font-bold text-blue-700">
                 </div>
 
                 <div class="flex justify-between items-center pt-2 border-t">
                     <button type="button" onclick="removeFromInventory()" class="text-rose-600 hover:underline text-xs font-bold">
-                        <i class="fa-solid fa-trash-can mr-1"></i> Envanterden Düş / İmha Et
+                        <i class="fa-solid fa-trash-can mr-1"></i> Hurdaya Ayır / Sil
                     </button>
                     <div class="flex gap-2">
                         <button type="button" onclick="closeEditModal()" class="px-3 py-1.5 bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold">İptal</button>
-                        <button type="submit" class="px-3 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-semibold">Kaydet</button>
+                        <button type="submit" class="px-3 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-semibold">Güncelle & Kaydet</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-
-    <!-- ALT BİLGİ -->
-    <footer class="py-4 bg-slate-900 text-center text-[11px] text-slate-400 border-t border-slate-800 mt-auto no-print">
-        <p class="font-bold text-slate-300">Konya Karapınar Devlet Hastanesi</p>
-        <p>Bilgi İşlem ve Demirbaş Birimi © <span id="currentYear">2026</span></p>
-    </footer>
 
     <!-- JAVASCRIPT MANTIĞI -->
     <script>
@@ -644,14 +728,9 @@
                 const personel = d.personel || d.col6 || '';
                 const durum = d.durum || d.col8 || 'Aktif';
 
-                if (durum === 'Hurda') {
-                    hurda++;
-                }
-                if (personel && !personel.includes('Zimmetsiz')) {
-                    zimmetli++;
-                } else {
-                    zimmetsiz++;
-                }
+                if (durum === 'Hurda') hurda++;
+                if (personel && !personel.includes('Zimmetsiz')) zimmetli++;
+                else zimmetsiz++;
             });
 
             document.getElementById('statTotal').innerText = total;
@@ -664,15 +743,31 @@
             e.preventDefault();
             const id = Date.now();
             const kunye = document.getElementById("newKunye").value.trim();
-            const cihazAdi = document.getElementById("newCihazAdi").value.trim();
-            const markaModel = document.getElementById("newMarkaModel").value.trim();
+            const butceTuru = document.getElementById("newButceTuru").value.trim();
+            const malzemeTanimi = document.getElementById("newMalzemeTanimi").value.trim();
+            const marka = document.getElementById("newMarka").value.trim();
+            const model = document.getElementById("newModel").value.trim();
             const seriNo = document.getElementById("newSeriNo").value.trim();
-            const birim = document.getElementById("newBirim").value.trim();
+            const demirbasNo = document.getElementById("newDemirbasNo").value.trim();
+            const sicilNo = document.getElementById("newSicilNo").value.trim();
+            const edinmeYili = document.getElementById("newEdinmeYili").value.trim();
             const durum = document.getElementById("newDurum").value;
+            const tedarikci = document.getElementById("newTedarikci").value.trim();
+            const tedarikTuru = document.getElementById("newTedarikTuru").value.trim();
+            const aciklama = document.getElementById("newAciklama").value.trim();
+            
+            const birim = "Ayniyat Taşınır Deposu";
             const personel = "Zimmetsiz (Depoda)";
             const timestamp = new Date().toISOString();
 
-            const row = [id, kunye, cihazAdi, markaModel, seriNo, birim, personel, timestamp, durum];
+            // 24 Sütunlu Tam Dizi
+            const row = [
+                id, kunye, butceTuru, edinmeYili, demirbasNo, sicilNo, 
+                malzemeTanimi, malzemeTanimi, marka, model, seriNo, 
+                aciklama, aciklama, "2318", "Konya Karapınar Devlet Hastanesi", 
+                birim, personel, birim, timestamp, timestamp, durum, 
+                tedarikTuru, tedarikci, tedarikTuru, "Envantere Yeni Kayıt"
+            ];
 
             await fetch(API_URL, {
                 method: "POST",
@@ -681,19 +776,20 @@
 
             await fetch(API_URL, {
                 method: "POST",
-                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, cihazAdi, "Envantere Yeni Cihaz Eklendi", durum] })
+                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, malzemeTanimi, "Envantere Yeni Cihaz Ekledi", durum] })
             });
 
             document.getElementById("newKunye").value = "";
-            document.getElementById("newCihazAdi").value = "";
-            document.getElementById("newMarkaModel").value = "";
+            document.getElementById("newMalzemeTanimi").value = "";
+            document.getElementById("newMarka").value = "";
+            document.getElementById("newModel").value = "";
             document.getElementById("newSeriNo").value = "";
-            document.getElementById("newBirim").value = "";
 
             loadDevicesFromSheets();
             loadHistoryFromSheets();
         }
 
+        // YATAY SATIR RENKLENDİRMELİ ANA TABLO RENDER
         function renderDevicesTable() {
             const query = document.getElementById("deviceSearchInput") ? document.getElementById("deviceSearchInput").value.toLowerCase() : "";
             const statusFilter = document.getElementById("deviceStatusFilter") ? document.getElementById("deviceStatusFilter").value : "ALL";
@@ -701,14 +797,12 @@
 
             let filtered = globalDevices.filter(d => {
                 const kunye = d.kunye || d.col1 || '';
-                const cihaz = d.cihazAdi || d.col2 || '';
-                const personel = d.personel || d.col6 || '';
-                const birim = d.birim || d.col5 || '';
-                const durum = d.durum || d.col8 || 'Aktif';
+                const malzeme = d.malzemeTanimi || d.col6 || d.cihazAdi || '';
+                const marka = d.marka || d.col8 || '';
+                const durum = d.durum || d.col20 || 'Aktif';
 
-                const text = `${kunye} ${cihaz} ${personel} ${birim}`.toLowerCase();
+                const text = `${kunye} ${malzeme} ${marka}`.toLowerCase();
                 const matchesQuery = text.includes(query);
-
                 let matchesFilter = true;
                 if (statusFilter !== "ALL") matchesFilter = durum === statusFilter;
 
@@ -716,45 +810,51 @@
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Kayıtlı cihaz bulunamadı.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 bg-white">Kayıtlı envanter bulunamadı.</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = filtered.map(d => {
                 const id = d.id || d.col0;
                 const kunye = d.kunye || d.col1;
-                const cihazAdi = d.cihazAdi || d.col2;
-                const model = d.markaModel || d.col3;
-                const seri = d.seriNo || d.col4;
-                const birim = d.birim || d.col5;
-                const durum = d.durum || d.col8 || 'Aktif';
+                const malzeme = d.malzemeTanimi || d.col6 || d.cihazAdi || '-';
+                const marka = d.marka || d.col8 || '-';
+                const model = d.model || d.col9 || '-';
+                const seri = d.seriNo || d.col10 || '-';
+                const sicil = d.sicilNo || d.col5 || '-';
+                const butce = d.butceTuru || d.col2 || '-';
+                const durum = d.durum || d.col20 || 'Aktif';
 
-                // Yatay Satır Renklendirmesi
-                let rowBg = "hover:bg-slate-50";
-                let durumBadge = `<span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800">🟢 Aktif</span>`;
+                // BİREBİR YATAY DİLİM RENKLENDİRME STİLLERİ
+                let rowStyle = "bg-emerald-50/70 hover:bg-emerald-100/80 border-l-4 border-l-emerald-500 text-slate-800";
+                let durumBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-200 text-emerald-900">🟢 Aktif</span>`;
+
                 if (durum === "Bakımda") {
-                    rowBg = "bg-amber-50/60 hover:bg-amber-50";
-                    durumBadge = `<span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-amber-100 text-amber-800">🟡 Bakımda</span>`;
+                    rowStyle = "bg-amber-50/80 hover:bg-amber-100/90 border-l-4 border-l-amber-500 text-slate-900";
+                    durumBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-200 text-amber-900">🟡 Bakımda</span>`;
                 } else if (durum === "Hurda") {
-                    rowBg = "bg-rose-50/60 hover:bg-rose-50";
-                    durumBadge = `<span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-rose-100 text-rose-800">🔴 Hurda / İmha</span>`;
+                    rowStyle = "bg-rose-50/80 hover:bg-rose-100/90 border-l-4 border-l-rose-500 text-slate-900";
+                    durumBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-200 text-rose-900">🔴 Hurda</span>`;
                 }
 
                 return `
-                    <tr class="${rowBg} border-b border-slate-100 transition">
+                    <tr class="${rowStyle} border-b border-slate-200 transition font-medium">
                         <td class="p-3">
-                            <div class="font-mono font-bold text-slate-800">${kunye}</div>
-                            <div class="text-xs font-semibold text-slate-600">${cihazAdi}</div>
+                            <div class="font-mono font-black text-slate-900 text-xs">${kunye}</div>
+                            <div class="font-bold text-slate-800 uppercase">${malzeme}</div>
                         </td>
                         <td class="p-3">
-                            <div>${model || '-'}</div>
-                            <div class="font-mono text-[10px] text-slate-400">SN: ${seri || '-'}</div>
+                            <div><span class="font-bold">${marka}</span> ${model}</div>
+                            <div class="font-mono text-[10px] text-slate-500">SN: ${seri}</div>
                         </td>
-                        <td class="p-3 font-semibold text-slate-700">${birim}</td>
+                        <td class="p-3">
+                            <div class="font-mono text-[11px]">${sicil}</div>
+                            <div class="text-[10px] font-bold text-slate-500">Bütçe: ${butce}</div>
+                        </td>
                         <td class="p-3">${durumBadge}</td>
                         <td class="p-3 text-center">
-                            <button onclick="openEditModal('${id}')" class="px-2.5 py-1 bg-slate-900 text-white rounded-lg text-[11px] font-semibold hover:bg-slate-800">
-                                <i class="fa-solid fa-pen-to-square mr-1"></i> Düzenle
+                            <button onclick="openEditModal('${id}')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white rounded text-[11px] font-bold shadow-sm">
+                                Düzenle
                             </button>
                         </td>
                     </tr>
@@ -762,45 +862,54 @@
             }).join('');
         }
 
+        // ZİMMET SEKMESİ VE ÖZEL FİLTRELERİ
         function renderZimmetTable() {
             const query = document.getElementById("zimmetSearchInput") ? document.getElementById("zimmetSearchInput").value.toLowerCase() : "";
+            const filterType = document.getElementById("zimmetFilterSelect") ? document.getElementById("zimmetFilterSelect").value : "ALL";
             const tbody = document.getElementById("zimmetTableBody");
             if (!tbody) return;
 
             let filtered = globalDevices.filter(d => {
                 const kunye = d.kunye || d.col1 || '';
-                const cihaz = d.cihazAdi || d.col2 || '';
-                const personel = d.personel || d.col6 || '';
-                const birim = d.birim || d.col5 || '';
-                return `${kunye} ${cihaz} ${personel} ${birim}`.toLowerCase().includes(query);
+                const malzeme = d.malzemeTanimi || d.col6 || d.cihazAdi || '';
+                const personel = d.personel || d.col16 || '';
+                const birim = d.birim || d.col15 || '';
+
+                const text = `${kunye} ${malzeme} ${personel} ${birim}`.toLowerCase();
+                const matchesQuery = text.includes(query);
+
+                let matchesFilter = true;
+                if (filterType === "ZIMMETLI") matchesFilter = personel && !personel.includes("Zimmetsiz");
+                else if (filterType === "ZIMMETSIZ") matchesFilter = !personel || personel.includes("Zimmetsiz");
+
+                return matchesQuery && matchesFilter;
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Cihaz bulunamadı.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Aranan kriterde cihaz bulunamadı.</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = filtered.map(d => {
                 const id = d.id || d.col0;
                 const kunye = d.kunye || d.col1;
-                const cihazAdi = d.cihazAdi || d.col2;
-                const model = d.markaModel || d.col3;
-                const birim = d.birim || d.col5;
-                const personel = d.personel || d.col6 || 'Zimmetsiz (Depoda)';
+                const malzeme = d.malzemeTanimi || d.col6 || d.cihazAdi || '-';
+                const birim = d.birim || d.col15 || 'Depo';
+                const personel = d.personel || d.col16 || 'Zimmetsiz (Depoda)';
 
                 const isZimmetli = personel && !personel.includes("Zimmetsiz");
                 const personelDisplay = isZimmetli 
-                    ? `<span class="px-2.5 py-1 rounded bg-blue-100 text-blue-800 font-bold text-xs"><i class="fa-solid fa-user mr-1"></i>${personel}</span>`
+                    ? `<span class="px-2.5 py-1 rounded bg-blue-100 text-blue-900 font-bold text-xs"><i class="fa-solid fa-user mr-1"></i>${personel}</span>`
                     : `<span class="text-slate-400 font-medium italic">Zimmetsiz (Depoda)</span>`;
 
                 return `
                     <tr class="hover:bg-slate-50 border-b border-slate-100">
-                        <td class="p-3 font-mono font-bold">${kunye}</td>
-                        <td class="p-3 font-semibold">${cihazAdi} <span class="text-[10px] text-slate-400">(${model || '-'})</span></td>
-                        <td class="p-3 font-medium text-slate-700">${birim}</td>
+                        <td class="p-3 font-mono font-bold text-slate-900">${kunye}</td>
+                        <td class="p-3 font-bold uppercase text-slate-800">${malzeme}</td>
+                        <td class="p-3 font-semibold text-slate-700">${birim}</td>
                         <td class="p-3">${personelDisplay}</td>
-                        <td class="p-3 text-center space-x-2">
-                            <button onclick="openEditModal('${id}')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700">
+                        <td class="p-3 text-center">
+                            <button onclick="openEditModal('${id}')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 shadow-sm">
                                 <i class="fa-solid fa-user-pen mr-1"></i> Zimmetle / Değiştir
                             </button>
                         </td>
@@ -823,11 +932,6 @@
                 return text.includes(query);
             });
 
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Aranan kritere uygun arşiv kaydı bulunamadı.</td></tr>`;
-                return;
-            }
-
             tbody.innerHTML = filtered.map(h => `
                 <tr class="hover:bg-slate-50 border-b border-slate-100">
                     <td class="p-3 font-mono text-slate-500">${new Date(h.timestamp || h.col1).toLocaleString('tr-TR')}</td>
@@ -845,14 +949,12 @@
 
             document.getElementById('editDeviceId').value = device.id || device.col0;
             document.getElementById('editKunye').value = device.kunye || device.col1 || '';
-            document.getElementById('editCihazAdi').value = device.cihazAdi || device.col2 || '';
-            document.getElementById('editMarkaModel').value = device.markaModel || device.col3 || '';
-            document.getElementById('editSeriNo').value = device.seriNo || device.col4 || '';
-            document.getElementById('editBirim').value = device.birim || device.col5 || '';
+            document.getElementById('editMalzemeTanimi').value = device.malzemeTanimi || device.col6 || device.cihazAdi || '';
+            document.getElementById('editBirim').value = device.birim || device.col15 || '';
             
-            const currentPersonel = device.personel || device.col6 || '';
+            const currentPersonel = device.personel || device.col16 || '';
             document.getElementById('editPersonel').value = currentPersonel.includes("Zimmetsiz") ? "" : currentPersonel;
-            document.getElementById('editDurum').value = device.durum || device.col8 || 'Aktif';
+            document.getElementById('editDurum').value = device.durum || device.col20 || 'Aktif';
 
             document.getElementById('editModal').classList.remove('hidden');
         }
@@ -864,10 +966,11 @@
         async function saveEditedDevice(e) {
             e.preventDefault();
             const id = document.getElementById('editDeviceId').value;
+            const device = globalDevices.find(d => String(d.id || d.col0) === String(id));
+            if(!device) return;
+
             const kunye = document.getElementById('editKunye').value;
-            const cihazAdi = document.getElementById('editCihazAdi').value;
-            const markaModel = document.getElementById('editMarkaModel').value;
-            const seriNo = document.getElementById('editSeriNo').value;
+            const malzemeTanimi = document.getElementById('editMalzemeTanimi').value;
             const birim = document.getElementById('editBirim').value;
             let personel = document.getElementById('editPersonel').value.trim();
             if (!personel) personel = "Zimmetsiz (Depoda)";
@@ -875,7 +978,13 @@
             const durum = document.getElementById('editDurum').value;
             const timestamp = new Date().toISOString();
 
-            const updatedRow = [id, kunye, cihazAdi, markaModel, seriNo, birim, personel, timestamp, durum];
+            // Güncellenmiş dizi mantığı
+            const updatedRow = [...(Object.values(device))];
+            updatedRow[1] = kunye;
+            updatedRow[6] = malzemeTanimi;
+            updatedRow[15] = birim;
+            updatedRow[16] = personel;
+            updatedRow[20] = durum;
 
             await fetch(API_URL, {
                 method: "POST",
@@ -884,7 +993,7 @@
 
             await fetch(API_URL, {
                 method: "POST",
-                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, cihazAdi, "Cihaz / Zimmet Güncellendi", personel] })
+                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, malzemeTanimi, "Zimmet / Birim Güncellendi", personel] })
             });
 
             closeEditModal();
@@ -895,9 +1004,9 @@
         async function removeFromInventory() {
             const id = document.getElementById('editDeviceId').value;
             const kunye = document.getElementById('editKunye').value;
-            const cihazAdi = document.getElementById('editCihazAdi').value;
+            const malzeme = document.getElementById('editMalzemeTanimi').value;
 
-            if (!confirm(`DİKKAT: ${kunye} künyeli cihaz hurdaya/imhaya ayrılarak envanterden çıkarılacak ve arşive alınacaktır. Onaylıyor musunuz?`)) return;
+            if (!confirm(`DİKKAT: ${kunye} künyeli cihaz envanterden çıkarılacak ve arşive alınacaktır. Onaylıyor musunuz?`)) return;
 
             const timestamp = new Date().toISOString();
 
@@ -908,7 +1017,7 @@
 
             await fetch(API_URL, {
                 method: "POST",
-                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, cihazAdi, "HURDA / İMHA - ENVANTERDEN ÇIKARILDI", "İmha / HEK"] })
+                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, malzeme, "HURDA / İMHA - ENVANTERDEN ÇIKARILDI", "İmha / HEK"] })
             });
 
             closeEditModal();
@@ -922,7 +1031,7 @@
             let options = '<option value="">-- Cihaz Seçiniz --</option>';
             globalDevices.forEach(d => {
                 const kunye = d.kunye || d.col1;
-                const name = d.cihazAdi || d.col2;
+                const name = d.malzemeTanimi || d.col6 || d.cihazAdi;
                 options += `<option value="${kunye}">${kunye} - ${name}</option>`;
             });
             select.innerHTML = options;
@@ -932,23 +1041,18 @@
             const tbody = document.getElementById("qrBatchTableBody");
             if (!tbody) return;
 
-            if (globalDevices.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-400">QR etiket listesi boş.</td></tr>`;
-                return;
-            }
-
             tbody.innerHTML = globalDevices.map(d => {
                 const kunye = d.kunye || d.col1;
-                const cihaz = d.cihazAdi || d.col2;
-                const birim = d.birim || d.col5;
-                const personel = d.personel || d.col6 || 'Zimmetsiz';
+                const malzeme = d.malzemeTanimi || d.col6 || d.cihazAdi;
+                const marka = d.marka || d.col8 || '-';
+                const model = d.model || d.col9 || '-';
 
                 return `
                     <tr class="hover:bg-slate-50 border-b">
                         <td class="p-2"><input type="checkbox" class="qr-select-checkbox" value="${kunye}"></td>
                         <td class="p-2 font-mono font-bold">${kunye}</td>
-                        <td class="p-2 font-semibold">${cihaz}</td>
-                        <td class="p-2 text-slate-500">${birim} | ${personel}</td>
+                        <td class="p-2 font-semibold uppercase">${malzeme}</td>
+                        <td class="p-2 text-slate-500">${marka} / ${model}</td>
                     </tr>
                 `;
             }).join('');
@@ -956,6 +1060,27 @@
 
         function toggleSelectAllQR(master) {
             document.querySelectorAll('.qr-select-checkbox').forEach(cb => cb.checked = master.checked);
+        }
+
+        function updateQrPreview() {
+            const kunye = document.getElementById('printDeviceSelect').value;
+            const device = globalDevices.find(d => (d.kunye || d.col1) === kunye);
+            if (!device) return;
+
+            document.getElementById('previewKunye').innerText = kunye;
+            document.getElementById('previewMalzemeTanimi').innerText = device.malzemeTanimi || device.col6 || device.cihazAdi || '-';
+            document.getElementById('previewMarka').innerText = device.marka || device.col8 || '-';
+            document.getElementById('previewModel').innerText = device.model || device.col9 || '-';
+            document.getElementById('previewSeriNo').innerText = device.seriNo || device.col10 || '-';
+            document.getElementById('previewButceTuru').innerText = device.butceTuru || device.col2 || '-';
+            document.getElementById('previewSicilNo').innerText = device.sicilNo || device.col5 || '-';
+            document.getElementById('previewEdinmeYili').innerText = device.edinmeYili || device.col3 || '-';
+
+            const display = document.getElementById('qrcodeDisplay');
+            display.innerHTML = "";
+
+            const mobileUrl = `https://konyakarapinardevlethastanesi.github.io/demirbaszimmet/mobil?kunye=${kunye}`;
+            new QRCode(display, { text: mobileUrl, width: 85, height: 85, colorDark: "#0f172a", colorLight: "#ffffff" });
         }
 
         function printSelectedQRCodes() {
@@ -970,24 +1095,44 @@
                 if (!device) return;
 
                 const card = document.createElement('div');
-                card.className = "border border-slate-400 p-2 rounded flex justify-between items-center bg-white";
-                card.style.width = "6cm";
-                card.style.height = "1cm";
-
+                card.className = "official-tag-card rounded overflow-hidden bg-white mb-2";
                 const mobileUrl = `https://konyakarapinardevlethastanesi.github.io/demirbaszimmet/mobil?kunye=${kunye}`;
                 
                 card.innerHTML = `
-                    <div class="text-left space-y-0.5 overflow-hidden">
-                        <div class="text-[7px] font-bold text-red-600 uppercase">Karapınar Devlet Hastanesi</div>
-                        <div class="text-[9px] font-mono font-bold">${kunye}</div>
-                        <div class="text-[9px] font-black truncate max-w-[140px]">${device.cihazAdi || device.col2}</div>
+                    <div class="border border-slate-900 flex flex-col bg-white">
+                        <div class="bg-slate-800 text-white px-2 py-1 flex items-center justify-between border-b border-slate-900">
+                            <div class="text-center flex-grow leading-tight">
+                                <div class="text-[9px] font-extrabold">T.C. SAĞLIK BAKANLIĞI</div>
+                                <div class="text-[8px] font-bold">KARAPINAR DEVLET HASTANESİ</div>
+                            </div>
+                        </div>
+                        <div class="flex flex-row border-b border-slate-900">
+                            <div class="flex-grow flex flex-col border-r border-slate-900">
+                                <div class="border-b border-slate-900 p-1 text-center font-black uppercase text-[11px]">
+                                    ${device.malzemeTanimi || device.col6 || '-'}
+                                </div>
+                                <div class="flex border-b border-slate-900 text-[9px] text-center font-bold">
+                                    <div class="w-1/3 border-r border-slate-900 p-0.5">${device.marka || device.col8 || '-'}</div>
+                                    <div class="w-1/3 border-r border-slate-900 p-0.5">${device.model || device.col9 || '-'}</div>
+                                    <div class="w-1/3 p-0.5 font-mono">${device.seriNo || device.col10 || '-'}</div>
+                                </div>
+                                <div class="flex border-b border-slate-900 text-[9px] text-center font-bold">
+                                    <div class="w-1/4 border-r border-slate-900 p-0.5">${device.butceTuru || device.col2 || '-'}</div>
+                                    <div class="w-3/4 p-0.5 font-mono">${device.sicilNo || device.col5 || '-'}</div>
+                                </div>
+                                <div class="flex text-[10px] text-center font-black">
+                                    <div class="w-1/4 border-r border-slate-900 p-0.5">${device.edinmeYili || device.col3 || '-'}</div>
+                                    <div class="w-3/4 p-0.5 font-mono text-xs">${kunye}</div>
+                                </div>
+                            </div>
+                            <div class="w-[85px] shrink-0 flex items-center justify-center p-1" id="qr_batch_${kunye}"></div>
+                        </div>
                     </div>
-                    <div id="qr_batch_${kunye}"></div>
                 `;
                 container.appendChild(card);
 
                 setTimeout(() => {
-                    new QRCode(document.getElementById(`qr_batch_${kunye}`), { text: mobileUrl, width: 32, height: 32 });
+                    new QRCode(document.getElementById(`qr_batch_${kunye}`), { text: mobileUrl, width: 70, height: 70 });
                 }, 50);
             });
 
@@ -1009,12 +1154,12 @@
                     <tr class="border-b border-slate-300">
                         <td class="border border-slate-300 p-1.5 text-center font-bold">${index + 1}</td>
                         <td class="border border-slate-300 p-1.5 font-mono font-bold">${d.kunye || d.col1}</td>
-                        <td class="border border-slate-300 p-1.5 font-semibold">${d.cihazAdi || d.col2}</td>
-                        <td class="border border-slate-300 p-1.5">${d.markaModel || d.col3 || '-'}</td>
-                        <td class="border border-slate-300 p-1.5 font-mono">${d.seriNo || d.col4 || '-'}</td>
-                        <td class="border border-slate-300 p-1.5">${d.birim || d.col5}</td>
-                        <td class="border border-slate-300 p-1.5">${d.durum || d.col8 || 'Aktif'}</td>
-                        <td class="border border-slate-300 p-1.5 font-bold">${d.personel || d.col6 || 'Zimmetsiz'}</td>
+                        <td class="border border-slate-300 p-1.5 font-bold uppercase">${d.malzemeTanimi || d.col6 || '-'}</td>
+                        <td class="border border-slate-300 p-1.5">${d.marka || d.col8 || '-'} / ${d.model || d.col9 || '-'}</td>
+                        <td class="border border-slate-300 p-1.5 font-mono">${d.seriNo || d.col10 || '-'}</td>
+                        <td class="border border-slate-300 p-1.5">${d.birim || d.col15 || '-'}</td>
+                        <td class="border border-slate-300 p-1.5 font-bold">${d.durum || d.col20 || 'Aktif'}</td>
+                        <td class="border border-slate-300 p-1.5 font-bold">${d.personel || d.col16 || 'Zimmetsiz'}</td>
                     </tr>
                 `).join('');
             }
@@ -1022,82 +1167,6 @@
             document.body.classList.add('print-inventory-mode');
             window.print();
             document.body.classList.remove('print-inventory-mode');
-        }
-
-        function updateQrPreview() {
-            const kunye = document.getElementById('printDeviceSelect').value;
-            const device = globalDevices.find(d => (d.kunye || d.col1) === kunye);
-            if (!device) return;
-
-            document.getElementById('previewKunye').innerText = kunye;
-            document.getElementById('previewCihazAdi').innerText = device.cihazAdi || device.col2;
-            document.getElementById('previewBirim').innerText = `Birim: ${device.birim || device.col5} | Zimmet: ${device.personel || device.col6}`;
-
-            const display = document.getElementById('qrcodeDisplay');
-            display.innerHTML = "";
-
-            const mobileUrl = `https://konyakarapinardevlethastanesi.github.io/demirbaszimmet/mobil?kunye=${kunye}`;
-            new QRCode(display, { text: mobileUrl, width: 75, height: 75, colorDark: "#0f172a", colorLight: "#ffffff" });
-        }
-
-        function downloadCurrentPreviewDeviceQR() {
-            const kunye = document.getElementById('printDeviceSelect').value;
-            if (!kunye) return alert("Lütfen bir cihaz seçin!");
-            const device = globalDevices.find(d => (d.kunye || d.col1) === kunye);
-
-            const scale = 4;
-            const canvas = document.createElement('canvas');
-            canvas.width = 600 * scale;   
-            canvas.height = 100 * scale;  
-            const ctx = canvas.getContext('2d');
-            ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'high';
-
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.strokeStyle = "#cbd5e1";
-            ctx.lineWidth = 1.5 * scale;
-            ctx.setLineDash([3 * scale, 3 * scale]);
-            ctx.strokeRect(4 * scale, 4 * scale, canvas.width - (8 * scale), canvas.height - (8 * scale));
-            ctx.setLineDash([]);
-
-            ctx.fillStyle = "#dc2626";
-            ctx.font = `bold ${7 * scale}px Inter, sans-serif`;
-            ctx.textAlign = "left";
-            ctx.fillText("KARAPINAR DEVLET HASTANESİ", 14 * scale, 22 * scale);
-
-            ctx.fillStyle = "#0f172a";
-            ctx.font = `bold ${10 * scale}px monospace`;
-            ctx.fillText(kunye, 14 * scale, 40 * scale);
-
-            ctx.font = `800 ${11 * scale}px Inter, sans-serif`;
-            ctx.fillText(device.cihazAdi || device.col2, 14 * scale, 62 * scale);
-
-            ctx.fillStyle = "#64748b";
-            ctx.font = `bold ${7 * scale}px Inter, sans-serif`;
-            ctx.fillText(`Birim: ${device.birim || device.col5}`, 14 * scale, 82 * scale);
-
-            const tempDiv = document.createElement('div');
-            const qrUrl = `https://konyakarapinardevlethastanesi.github.io/demirbaszimmet/mobil?kunye=${kunye}`;
-            const qr = new QRCode(tempDiv, {
-                text: qrUrl,
-                width: 76 * scale, height: 76 * scale
-            });
-
-            setTimeout(() => {
-                const img = tempDiv.querySelector('img') || tempDiv.querySelector('canvas');
-                if (img) {
-                    ctx.drawImage(img, canvas.width - (86 * scale), 12 * scale, 76 * scale, 76 * scale);
-                }
-
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png');
-                link.download = `Zimmet_Etiket_${kunye}_6x1cm.png`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }, 200);
         }
 
         function updateClock() {
