@@ -9,7 +9,6 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen p-3 flex flex-col justify-between antialiased">
     <div class="max-w-md w-full mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
-        <!-- ÜST BAŞLIK -->
         <div class="bg-slate-900 text-white p-4 text-center space-y-1">
             <div class="w-12 h-12 mx-auto"><img src="logo.png" alt="Logo" class="w-full h-full object-contain"></div>
             <div class="text-[11px] font-bold text-red-500 uppercase tracking-widest">T.C. Sağlık Bakanlığı</div>
@@ -18,13 +17,11 @@
             <p class="text-[10px] text-slate-400">Resmi Taşınır / Demirbaş Künye Belgesi</p>
         </div>
 
-        <!-- YÜKLENİYOR EKRANI -->
         <div id="loading" class="p-8 text-center text-slate-500">
             <i class="fa-solid fa-spinner fa-spin text-2xl text-blue-600 mb-2"></i>
             <p class="text-xs font-semibold">Künye Bilgileri Yükleniyor...</p>
         </div>
 
-        <!-- İÇERİK EKRANI -->
         <div id="content" class="hidden p-4 space-y-3 text-xs">
             <div class="bg-slate-50 p-3 rounded-xl border flex justify-between items-center">
                 <div>
@@ -68,7 +65,6 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer class="mt-4 text-center text-[10px] text-slate-400 font-medium">
         T.C. Sağlık Bakanlığı • Karapınar Devlet Hastanesi <span id="year"></span>
     </footer>
@@ -143,20 +139,21 @@
                 document.getElementById('mTedarikci').innerText = getProp(device, 'tedarikci', 14);
                 document.getElementById('mAciklama').innerText = getProp(device, 'aciklama', 15);
 
-                // Tarih formatlama (Q Sütunu / 16. indeks)
+                // Zimmetsiz ise Tarih boş/tire olsun, zimmetliyse tarihi yazdır
+                const rawPersonel = getProp(device, 'personel', 12);
+                const maskedPersonel = maskName(rawPersonel);
+                document.getElementById('mPersonel').innerText = maskedPersonel;
+
                 const rawTarih = getProp(device, 'tarih', 16);
-                if (rawTarih && rawTarih !== "-") {
+                if (maskedPersonel.includes("Zimmetsiz") || !rawTarih || rawTarih === "-") {
+                    document.getElementById('mTarih').innerText = "-";
+                } else {
                     try {
                         document.getElementById('mTarih').innerText = new Date(rawTarih).toLocaleString('tr-TR');
                     } catch(err) {
                         document.getElementById('mTarih').innerText = rawTarih;
                     }
-                } else {
-                    document.getElementById('mTarih').innerText = "-";
                 }
-
-                const rawPersonel = getProp(device, 'personel', 12);
-                document.getElementById('mPersonel').innerText = maskName(rawPersonel);
 
                 const durum = getProp(device, 'durum', 10);
                 let badge = `<span class="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 font-bold">🟢 Aktif</span>`;
