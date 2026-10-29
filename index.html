@@ -37,7 +37,7 @@
                 position: absolute !important; 
                 left: 0 !important; top: 0 !important; 
                 width: 100% !important; 
-                padding: 15mm !important; 
+                padding: 10mm !important; 
             }
 
             /* QR Etiket Yazdırma Modu */
@@ -188,26 +188,69 @@
 
         <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-grow space-y-6">
 
-            <!-- SEKMELER -->
+            <!-- TAM 4 ADET SEKMELİ MENÜ -->
             <div class="flex space-x-2 border-b border-slate-200 pb-2 overflow-x-auto no-print">
                 <button onclick="switchAdminTab('devices-tab')" id="tab-btn-devices" class="tab-btn px-4 py-2.5 rounded-lg text-xs sm:text-sm font-bold bg-slate-900 text-white shadow-sm transition flex items-center space-x-2">
-                    <i class="fa-solid fa-boxes-stacked"></i><span>1. Envanter Cihaz Kayıtları</span>
+                    <i class="fa-solid fa-laptop-medical"></i><span>1. Cihaz / Envanter Kayıtları</span>
+                </button>
+                <button onclick="switchAdminTab('zimmet-tab')" id="tab-btn-zimmet" class="tab-btn px-4 py-2.5 rounded-lg text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-200 transition flex items-center space-x-2">
+                    <i class="fa-solid fa-user-check"></i><span>2. Zimmet İşlemleri & Atama</span>
                 </button>
                 <button onclick="switchAdminTab('history-tab')" id="tab-btn-history" class="tab-btn px-4 py-2.5 rounded-lg text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-200 transition flex items-center space-x-2">
-                    <i class="fa-solid fa-clock-rotate-left"></i><span>2. Zimmet Geçmişi / Arşiv</span>
+                    <i class="fa-solid fa-clock-rotate-left"></i><span>3. Zimmet Geçmişi / Arşiv</span>
                 </button>
                 <button onclick="switchAdminTab('qrprint-tab')" id="tab-btn-qrprint" class="tab-btn px-4 py-2.5 rounded-lg text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-200 transition flex items-center space-x-2">
-                    <i class="fa-solid fa-qrcode"></i><span>3. QR Etiket Üreticisi & Toplu Yazdır</span>
+                    <i class="fa-solid fa-qrcode"></i><span>4. QR Etiket Üretici (Toplu Yazdır)</span>
                 </button>
             </div>
 
-            <!-- ==================== TAB 1: ENVANTER CİHAZ KAYITLARI ==================== -->
+            <!-- ==================== ÜST İSTATİSTİK ÖZET KARTLARI ==================== -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 no-print">
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Toplam Cihaz</p>
+                        <h3 id="statTotal" class="text-lg font-black text-slate-900">0</h3>
+                    </div>
+                    <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-700">
+                        <i class="fa-solid fa-boxes-stacked text-sm"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-blue-500 uppercase tracking-wider">Zimmetli</p>
+                        <h3 id="statZimmetli" class="text-lg font-black text-blue-600">0</h3>
+                    </div>
+                    <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
+                        <i class="fa-solid fa-user-shield text-sm"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Zimmetsiz (Depoda)</p>
+                        <h3 id="statZimmetsiz" class="text-lg font-black text-slate-700">0</h3>
+                    </div>
+                    <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
+                        <i class="fa-solid fa-warehouse text-sm"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Hurda / İmha</p>
+                        <h3 id="statHurda" class="text-lg font-black text-rose-600">0</h3>
+                    </div>
+                    <div class="w-9 h-9 rounded-lg bg-rose-50 flex items-center justify-center text-rose-600">
+                        <i class="fa-solid fa-triangle-exclamation text-sm"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB 1: CİHAZ / ENVANTER KAYITLARI ==================== -->
             <section id="devices-tab" class="admin-tab-content block space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <!-- Yeni Cihaz / Envanter Ekleme Formu -->
+                    <!-- Cihaz Kayıt Formu -->
                     <div class="lg:col-span-4 bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4 no-print">
                         <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-plus-circle text-red-600"></i> Yeni Cihaz / Envanter Ekle
+                            <i class="fa-solid fa-plus-circle text-red-600"></i> Yeni Cihaz Kaydı Ekle
                         </h2>
                         <form onsubmit="addNewDevice(event)" class="space-y-3">
                             <div>
@@ -235,7 +278,7 @@
                                 <select id="newDurum" class="w-full p-2 border border-slate-300 rounded-lg text-xs font-bold text-slate-800">
                                     <option value="Aktif">🟢 Aktif / Kullanımda</option>
                                     <option value="Bakımda">🟡 Bakımda / Onarımda</option>
-                                    <option value="Hurda">🔴 Hurda / Hek</option>
+                                    <option value="Hurda">🔴 Hurda / İmha</option>
                                 </select>
                             </div>
                             <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 transition shadow">
@@ -244,24 +287,20 @@
                         </form>
                     </div>
 
-                    <!-- Cihaz Listesi, Arama ve Filtreleme -->
+                    <!-- Envanter Cihaz Listesi ve A4 Yazdırma -->
                     <div class="lg:col-span-8 bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
                         <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                            <!-- Arama Kutusu -->
                             <div class="relative w-full sm:w-64">
                                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                                <input type="text" id="deviceSearchInput" oninput="renderDevicesTable()" placeholder="Künye, cihaz, personel, birim ara..." class="w-full pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:outline-none">
+                                <input type="text" id="deviceSearchInput" oninput="renderDevicesTable()" placeholder="Künye, cihaz, birim ara..." class="w-full pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:outline-none">
                             </div>
 
-                            <!-- Filtre Seçeneği -->
                             <div class="flex items-center gap-2 w-full sm:w-auto">
                                 <select id="deviceStatusFilter" onchange="renderDevicesTable()" class="p-1.5 border border-slate-300 rounded-lg text-xs font-semibold bg-white text-slate-700">
                                     <option value="ALL">Tüm Durumlar</option>
-                                    <option value="ZIMMETLI">🔵 Sadece Zimmetliler</option>
-                                    <option value="ZIMMETSIZ">⚪ Zimmetsiz (Depodakiler)</option>
                                     <option value="Aktif">🟢 Aktif Cihazlar</option>
                                     <option value="Bakımda">🟡 Bakımdakiler</option>
-                                    <option value="Hurda">🔴 Hurda / Hek</option>
+                                    <option value="Hurda">🔴 Hurda / İmha</option>
                                 </select>
 
                                 <button onclick="printInventoryA4List()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition shadow-sm whitespace-nowrap">
@@ -280,8 +319,7 @@
                                         <th class="p-3">Künye / Cihaz</th>
                                         <th class="p-3">Model / Seri No</th>
                                         <th class="p-3">Birim / Oda</th>
-                                        <th class="p-3">Cihaz Durumu</th>
-                                        <th class="p-3">Zimmetli Personel</th>
+                                        <th class="p-3">Durumu</th>
                                         <th class="p-3 text-center">İşlemler</th>
                                     </tr>
                                 </thead>
@@ -292,7 +330,40 @@
                 </div>
             </section>
 
-            <!-- ==================== TAB 2: ZİMMET GEÇMİŞİ / ARŞİV ==================== -->
+            <!-- ==================== TAB 2: ZİMMET İŞLEMLERİ & ATAMA ==================== -->
+            <section id="zimmet-tab" class="admin-tab-content hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+                        <div>
+                            <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-user-check text-blue-600"></i> Personel Zimmet Atama ve Yönetim Paneli
+                            </h2>
+                            <p class="text-[11px] text-slate-400">Cihazları personele zimmetleyin veya boşa çıkarın.</p>
+                        </div>
+                        <div class="relative w-full sm:w-72">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" id="zimmetSearchInput" oninput="renderZimmetTable()" placeholder="Künye, cihaz veya personel ara..." class="w-full pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto max-h-[500px]">
+                        <table class="w-full text-left text-xs text-slate-600">
+                            <thead class="bg-slate-100 text-slate-700 font-bold uppercase">
+                                <tr>
+                                    <th class="p-3">Künye No</th>
+                                    <th class="p-3">Cihaz Adı / Model</th>
+                                    <th class="p-3">Birim / Oda</th>
+                                    <th class="p-3">Zimmetli Personel</th>
+                                    <th class="p-3 text-center">Zimmet İşlemi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="zimmetTableBody" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== TAB 3: ZİMMET GEÇMİŞİ / ARŞİV ==================== -->
             <section id="history-tab" class="admin-tab-content hidden space-y-4">
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
                     <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
@@ -304,15 +375,14 @@
                         </button>
                     </div>
 
-                    <!-- ZİMMET GEÇMİŞİ ARAMA ÇUBUĞU -->
                     <div class="relative w-full">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                         <input type="text" id="historySearchInput" oninput="renderHistoryTable()" placeholder="Künye no, cihaz adı, işlem veya personel ara..." class="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none">
                     </div>
 
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto max-h-[500px]">
                         <table class="w-full text-left text-xs text-slate-600">
-                            <thead class="bg-slate-100 text-slate-700 font-bold uppercase">
+                            <thead class="bg-slate-100 text-slate-700 font-bold uppercase sticky top-0">
                                 <tr>
                                     <th class="p-3">Tarih / Saat</th>
                                     <th class="p-3">Künye No</th>
@@ -327,10 +397,9 @@
                 </div>
             </section>
 
-            <!-- ==================== TAB 3: QR ETİKET ÜRETİCİSİ & TOPLU YAZDIR ==================== -->
+            <!-- ==================== TAB 4: QR ETİKET ÜRETİCİSİ & TOPLU YAZDIR ==================== -->
             <section id="qrprint-tab" class="admin-tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <!-- Tekli Önizleme Kartı -->
                     <div class="lg:col-span-5 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center space-y-4">
                         <div class="w-full text-left border-b border-slate-100 pb-2">
                             <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
@@ -345,7 +414,6 @@
                             </select>
                         </div>
 
-                        <!-- 6x1 cm Önizleme Kartı -->
                         <div id="printTargetCard" class="border-2 border-dashed border-slate-300 rounded-xl bg-white shadow-sm overflow-hidden">
                             <div class="flex flex-col justify-center text-left space-y-0.5 overflow-hidden pr-2">
                                 <div class="text-[8px] font-bold text-red-600 uppercase tracking-tight">Karapınar Devlet Hastanesi</div>
@@ -363,7 +431,6 @@
                         </button>
                     </div>
 
-                    <!-- Otomatik Oluşan QR Listesi ve Toplu Yazdırma -->
                     <div class="lg:col-span-7 bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
                         <div class="flex justify-between items-center border-b pb-3">
                             <div>
@@ -396,7 +463,7 @@
         </main>
     </div>
 
-    <!-- A4 RESMİ ENVANTER ÇIKTI ALANI (Yazdırırken görünür) -->
+    <!-- A4 RESMİ ENVANTER ÇIKTI ALANI -->
     <div id="a4PrintArea" class="hidden">
         <div class="text-center space-y-1 border-b-2 border-slate-900 pb-3 mb-4">
             <h1 class="text-base font-bold tracking-wider">T.C. SAĞLIK BAKANLIĞI</h1>
@@ -421,7 +488,6 @@
             <tbody id="a4PrintTableBody"></tbody>
         </table>
 
-        <!-- Sayfa Alt Bilgisi ve İmza Bloğu -->
         <div class="mt-8 pt-4 border-t border-slate-300 flex justify-between items-end text-[10px] text-slate-700">
             <div>
                 <p><strong>Rapor Tarihi:</strong> <span id="a4PrintDate">--/--/----</span></p>
@@ -434,10 +500,10 @@
         </div>
     </div>
 
-    <!-- TOPLU QR BSK ALANI (Yazdırırken görünür) -->
+    <!-- TOPLU QR BASKI ALANI -->
     <div id="qrPrintBatchArea" class="hidden grid grid-cols-2 gap-4 p-4 bg-white"></div>
 
-    <!-- ZİMMET & CİHAZ DÜZENLEME MODALI -->
+    <!-- ZİMMET & CİHAZ DÜZENLEME / ATAMA MODALI -->
     <div id="editModal" class="fixed inset-0 bg-slate-900/80 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b pb-2">
@@ -473,17 +539,17 @@
                     <select id="editDurum" class="w-full p-2 border rounded-lg text-xs font-bold">
                         <option value="Aktif">🟢 Aktif / Kullanımda</option>
                         <option value="Bakımda">🟡 Bakımda / Onarımda</option>
-                        <option value="Hurda">🔴 Hurda / Hek</option>
+                        <option value="Hurda">🔴 Hurda / İmha</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Zimmetli Personel (Boş bırakılırsa zimmet düşer)</label>
-                    <input type="text" id="editPersonel" placeholder="Zimmetsiz (Depoda kalır)" class="w-full p-2 border rounded-lg text-xs font-bold text-blue-700">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Zimmetli Personel (Boş bırakılırsa depoya alınır)</label>
+                    <input type="text" id="editPersonel" placeholder="Örn: Dr. Ahmet Yılmaz" class="w-full p-2 border rounded-lg text-xs font-bold text-blue-700">
                 </div>
 
                 <div class="flex justify-between items-center pt-2 border-t">
                     <button type="button" onclick="removeFromInventory()" class="text-rose-600 hover:underline text-xs font-bold">
-                        <i class="fa-solid fa-trash-can mr-1"></i> Envanterden Düş
+                        <i class="fa-solid fa-trash-can mr-1"></i> Envanterden Düş / İmha Et
                     </button>
                     <div class="flex gap-2">
                         <button type="button" onclick="closeEditModal()" class="px-3 py-1.5 bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold">İptal</button>
@@ -543,6 +609,7 @@
             document.getElementById(`tab-btn-${btnKey}`).classList.remove('text-slate-600', 'font-medium');
 
             if (tabId === 'devices-tab') loadDevicesFromSheets();
+            if (tabId === 'zimmet-tab') renderZimmetTable();
             if (tabId === 'history-tab') loadHistoryFromSheets();
             if (tabId === 'qrprint-tab') populatePrintDropdown();
         }
@@ -551,7 +618,9 @@
             try {
                 const res = await fetch(API_URL + "?sheet=ZimmetDB");
                 globalDevices = await res.json();
+                updateDashboardStats();
                 renderDevicesTable();
+                renderZimmetTable();
                 populatePrintDropdown();
                 renderQRBatchTable();
             } catch (e) { console.error(e); }
@@ -563,6 +632,32 @@
                 globalHistory = await res.json();
                 renderHistoryTable();
             } catch (e) { console.error(e); }
+        }
+
+        function updateDashboardStats() {
+            const total = globalDevices.length;
+            let zimmetli = 0;
+            let zimmetsiz = 0;
+            let hurda = 0;
+
+            globalDevices.forEach(d => {
+                const personel = d.personel || d.col6 || '';
+                const durum = d.durum || d.col8 || 'Aktif';
+
+                if (durum === 'Hurda') {
+                    hurda++;
+                }
+                if (personel && !personel.includes('Zimmetsiz')) {
+                    zimmetli++;
+                } else {
+                    zimmetsiz++;
+                }
+            });
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statZimmetli').innerText = zimmetli;
+            document.getElementById('statZimmetsiz').innerText = zimmetsiz;
+            document.getElementById('statHurda').innerText = hurda;
         }
 
         async function addNewDevice(e) {
@@ -586,7 +681,7 @@
 
             await fetch(API_URL, {
                 method: "POST",
-                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, cihazAdi, "Envantere Yeni Cihaz Ekledi", durum] })
+                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, cihazAdi, "Envantere Yeni Cihaz Eklendi", durum] })
             });
 
             document.getElementById("newKunye").value = "";
@@ -615,15 +710,13 @@
                 const matchesQuery = text.includes(query);
 
                 let matchesFilter = true;
-                if (statusFilter === "ZIMMETLI") matchesFilter = personel && !personel.includes("Zimmetsiz");
-                else if (statusFilter === "ZIMMETSIZ") matchesFilter = !personel || personel.includes("Zimmetsiz");
-                else if (statusFilter !== "ALL") matchesFilter = durum === statusFilter;
+                if (statusFilter !== "ALL") matchesFilter = durum === statusFilter;
 
                 return matchesQuery && matchesFilter;
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">Kayıtlı cihaz bulunamadı.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Kayıtlı cihaz bulunamadı.</td></tr>`;
                 return;
             }
 
@@ -634,20 +727,21 @@
                 const model = d.markaModel || d.col3;
                 const seri = d.seriNo || d.col4;
                 const birim = d.birim || d.col5;
-                const personel = d.personel || d.col6 || 'Zimmetsiz (Depoda)';
                 const durum = d.durum || d.col8 || 'Aktif';
 
-                let durumBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">🟢 Aktif</span>`;
-                if (durum === "Bakımda") durumBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">🟡 Bakımda</span>`;
-                if (durum === "Hurda") durumBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">🔴 Hurda</span>`;
-
-                const isZimmetli = personel && !personel.includes("Zimmetsiz");
-                const personelBadge = isZimmetli 
-                    ? `<span class="font-bold text-red-600">${personel}</span>`
-                    : `<span class="text-slate-400 font-medium italic">Zimmetsiz (Depoda)</span>`;
+                // Yatay Satır Renklendirmesi
+                let rowBg = "hover:bg-slate-50";
+                let durumBadge = `<span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800">🟢 Aktif</span>`;
+                if (durum === "Bakımda") {
+                    rowBg = "bg-amber-50/60 hover:bg-amber-50";
+                    durumBadge = `<span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-amber-100 text-amber-800">🟡 Bakımda</span>`;
+                } else if (durum === "Hurda") {
+                    rowBg = "bg-rose-50/60 hover:bg-rose-50";
+                    durumBadge = `<span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-rose-100 text-rose-800">🔴 Hurda / İmha</span>`;
+                }
 
                 return `
-                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                    <tr class="${rowBg} border-b border-slate-100 transition">
                         <td class="p-3">
                             <div class="font-mono font-bold text-slate-800">${kunye}</div>
                             <div class="text-xs font-semibold text-slate-600">${cihazAdi}</div>
@@ -658,9 +752,57 @@
                         </td>
                         <td class="p-3 font-semibold text-slate-700">${birim}</td>
                         <td class="p-3">${durumBadge}</td>
-                        <td class="p-3">${personelBadge}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="openEditModal('${id}')" class="px-2.5 py-1 bg-slate-900 text-white rounded-lg text-[11px] font-semibold hover:bg-slate-800">
+                                <i class="fa-solid fa-pen-to-square mr-1"></i> Düzenle
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderZimmetTable() {
+            const query = document.getElementById("zimmetSearchInput") ? document.getElementById("zimmetSearchInput").value.toLowerCase() : "";
+            const tbody = document.getElementById("zimmetTableBody");
+            if (!tbody) return;
+
+            let filtered = globalDevices.filter(d => {
+                const kunye = d.kunye || d.col1 || '';
+                const cihaz = d.cihazAdi || d.col2 || '';
+                const personel = d.personel || d.col6 || '';
+                const birim = d.birim || d.col5 || '';
+                return `${kunye} ${cihaz} ${personel} ${birim}`.toLowerCase().includes(query);
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Cihaz bulunamadı.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(d => {
+                const id = d.id || d.col0;
+                const kunye = d.kunye || d.col1;
+                const cihazAdi = d.cihazAdi || d.col2;
+                const model = d.markaModel || d.col3;
+                const birim = d.birim || d.col5;
+                const personel = d.personel || d.col6 || 'Zimmetsiz (Depoda)';
+
+                const isZimmetli = personel && !personel.includes("Zimmetsiz");
+                const personelDisplay = isZimmetli 
+                    ? `<span class="px-2.5 py-1 rounded bg-blue-100 text-blue-800 font-bold text-xs"><i class="fa-solid fa-user mr-1"></i>${personel}</span>`
+                    : `<span class="text-slate-400 font-medium italic">Zimmetsiz (Depoda)</span>`;
+
+                return `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-3 font-mono font-bold">${kunye}</td>
+                        <td class="p-3 font-semibold">${cihazAdi} <span class="text-[10px] text-slate-400">(${model || '-'})</span></td>
+                        <td class="p-3 font-medium text-slate-700">${birim}</td>
+                        <td class="p-3">${personelDisplay}</td>
                         <td class="p-3 text-center space-x-2">
-                            <button onclick="openEditModal('${id}')" class="text-blue-600 hover:underline font-semibold">Düzenle / Zimmet</button>
+                            <button onclick="openEditModal('${id}')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700">
+                                <i class="fa-solid fa-user-pen mr-1"></i> Zimmetle / Değiştir
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -755,7 +897,7 @@
             const kunye = document.getElementById('editKunye').value;
             const cihazAdi = document.getElementById('editCihazAdi').value;
 
-            if (!confirm(`DİKKAT: ${kunye} künyeli cihaz kurum envanterinden çıkarılacak ve arşive alınacaktır. Onaylıyor musunuz?`)) return;
+            if (!confirm(`DİKKAT: ${kunye} künyeli cihaz hurdaya/imhaya ayrılarak envanterden çıkarılacak ve arşive alınacaktır. Onaylıyor musunuz?`)) return;
 
             const timestamp = new Date().toISOString();
 
@@ -766,7 +908,7 @@
 
             await fetch(API_URL, {
                 method: "POST",
-                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, cihazAdi, "KURUM ENVANTERİNDEN AYRILDI", "Envanter Dışı"] })
+                body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), timestamp, kunye, cihazAdi, "HURDA / İMHA - ENVANTERDEN ÇIKARILDI", "İmha / HEK"] })
             });
 
             closeEditModal();
