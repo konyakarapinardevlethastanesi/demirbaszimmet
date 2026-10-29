@@ -59,6 +59,8 @@
             </div>
 
             <div class="bg-slate-50 p-3 rounded-xl border space-y-1 text-[10px]">
+                <p><strong>Kurum Kodu:</strong> <span class="font-bold text-slate-900">2318</span></p>
+                <p><strong>Zimmet / İşlem Tarihi:</strong> <span id="mTarih" class="font-semibold text-slate-700">-</span></p>
                 <p><strong>Tedarik Türü:</strong> <span id="mTedarikTuru" class="font-semibold">-</span></p>
                 <p><strong>Tedarikçi:</strong> <span id="mTedarikci" class="font-semibold">-</span></p>
                 <p><strong>Açıklama:</strong> <span id="mAciklama" class="font-semibold">-</span></p>
@@ -74,19 +76,16 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbygz_tvIoxfziUITJDqzyypreETKUNp2o6ANTW0TVsyEf4j32G_uDXa6Ogu0O0wiwd9/exec";
         
-        // URL'den Künye Numarasını Güvenli Yakalama
         const urlParams = new URLSearchParams(window.location.search);
         let rawKunye = urlParams.get('kunye') || "";
         const targetKunye = decodeURIComponent(rawKunye).trim();
 
-        // Esnek Alan Okuyucu (Name veya colIdx Yedekli)
         function getProp(obj, propName, colIdx) {
             let val = obj[propName] !== undefined ? obj[propName] : obj['col' + colIdx];
             if (val === undefined || val === null || String(val).trim() === "") return "-";
             return String(val).trim();
         }
 
-        // Personel İsmini Kısmi Maskeleme (Örn: Ahmet YILMAZ -> Ah*** YI***)
         function maskName(fullName) {
             if (!fullName || fullName === "-" || fullName.includes("Zimmetsiz")) {
                 return "Zimmetsiz (Depoda)";
@@ -111,7 +110,6 @@
                 const res = await fetch(API_URL + "?sheet=EnvanterYeni");
                 const data = await res.json();
                 
-                // Künye Numarasını sayı/metin tip farkına bakmaksızın eşleştirme
                 const device = data.find(d => {
                     const k = getProp(d, 'kunyeNo', 1);
                     return String(k) === String(targetKunye);
@@ -131,7 +129,6 @@
                     return;
                 }
 
-                // Alanları Eşleştirme (Boşsa '-' Basar)
                 document.getElementById('mKunye').innerText = targetKunye;
                 document.getElementById('mMalzeme').innerText = getProp(device, 'malzemeTanimi', 6);
                 document.getElementById('mMarka').innerText = getProp(device, 'marka', 7);
@@ -146,11 +143,21 @@
                 document.getElementById('mTedarikci').innerText = getProp(device, 'tedarikci', 14);
                 document.getElementById('mAciklama').innerText = getProp(device, 'aciklama', 15);
 
-                // Personel İsim Maskeleme
+                // Tarih formatlama (Q Sütunu / 16. indeks)
+                const rawTarih = getProp(device, 'tarih', 16);
+                if (rawTarih && rawTarih !== "-") {
+                    try {
+                        document.getElementById('mTarih').innerText = new Date(rawTarih).toLocaleString('tr-TR');
+                    } catch(err) {
+                        document.getElementById('mTarih').innerText = rawTarih;
+                    }
+                } else {
+                    document.getElementById('mTarih').innerText = "-";
+                }
+
                 const rawPersonel = getProp(device, 'personel', 12);
                 document.getElementById('mPersonel').innerText = maskName(rawPersonel);
 
-                // Durum Rozeti
                 const durum = getProp(device, 'durum', 10);
                 let badge = `<span class="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 font-bold">🟢 Aktif</span>`;
                 if(durum === "Bakımda") badge = `<span class="px-2.5 py-1 rounded bg-amber-100 text-amber-800 font-bold">🟡 Bakımda</span>`;
