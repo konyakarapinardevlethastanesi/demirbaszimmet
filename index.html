@@ -21,18 +21,18 @@
             color: #0f172a !important;
             box-sizing: border-box !important;
         }
+
+        /* KARARLI YAZDIRMA KURALLARI (Boş Sayfa Hatası Giderildi) */
         @media print {
             body * { visibility: hidden !important; }
             .no-print { display: none !important; }
             
-            /* A4 Liste Yazdırma Düzeltmesi (Boş Sayfa Hatası Giderildi) */
             body.print-inventory-mode, body.print-inventory-mode * { visibility: visible !important; }
             body.print-inventory-mode { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; background: white !important; }
-            body.print-inventory-mode #a4PrintArea { display: block !important; position: relative !important; width: 100% !important; padding: 5mm !important; }
-            
-            /* Tekil Etiket Yazdırma Düzeltmesi */
-            body.print-single-qr-mode #printTargetCard,
-            body.print-single-qr-mode #printTargetCard * { visibility: visible !important; }
+            body.print-inventory-mode #a4PrintArea { display: block !important; position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; }
+
+            body.print-single-qr-mode, body.print-single-qr-mode * { visibility: hidden !important; }
+            body.print-single-qr-mode #printTargetCard, body.print-single-qr-mode #printTargetCard * { visibility: visible !important; }
             body.print-single-qr-mode #printTargetCard { 
                 position: absolute !important; 
                 left: 0 !important; 
@@ -40,7 +40,7 @@
                 margin: 0 !important;
                 box-shadow: none !important;
             }
-            @page { size: auto; margin: 0mm; }
+            @page { size: auto; margin: 5mm; }
         }
     </style>
 </head>
@@ -326,7 +326,7 @@
                 </div>
             </section>
 
-            <!-- TAB 4: QR ETİKET (Orijinal Siyah Şeritli ve Logolu Tasarım) -->
+            <!-- TAB 4: QR ETİKET -->
             <section id="qrprint-tab" class="admin-tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <div class="lg:col-span-6 bg-white p-5 rounded-xl shadow-sm border space-y-3">
@@ -353,7 +353,7 @@
                             </button>
                         </div>
 
-                        <!-- ORİJİNAL SİYAH ŞERİTLİ VE LOGOLU ETİKET KARTI -->
+                        <!-- ETİKET KARTI -->
                         <div id="printTargetCard" class="official-tag-card rounded shadow-sm overflow-hidden my-auto">
                             <div class="border border-slate-900 flex flex-col bg-white">
                                 <div class="bg-slate-900 text-white px-2 py-1 flex items-center justify-between border-b border-slate-900">
@@ -437,7 +437,7 @@
         </table>
     </div>
 
-    <!-- MODAL 1: CİHAZ DÜZENLEME (TÜM KAYIT ALANLARI EKLENDİ) -->
+    <!-- MODAL 1: CİHAZ DÜZENLEME -->
     <div id="editInventoryModal" class="fixed inset-0 bg-slate-900/80 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl text-xs max-h-[90vh] overflow-y-auto">
             <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b pb-2">
@@ -487,7 +487,7 @@
         </div>
     </div>
 
-    <!-- MODAL 1.1: ŞIK AÇILIR PENCERE - ZİMMETLİ HURDAYA AYIRMA UYARI MODALI -->
+    <!-- MODAL 1.1: ZİMMETLİ HURDAYA AYIRMA UYARI MODALI -->
     <div id="hurdaWarningModal" class="fixed inset-0 bg-slate-900/90 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-xs border border-amber-200 text-center">
             <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-xl">
@@ -499,7 +499,7 @@
         </div>
     </div>
 
-    <!-- MODAL 1.2: CİHAZ SİLME ONAY MODALI (NEDEN SORGULAMA) -->
+    <!-- MODAL 1.2: CİHAZ SİLME ONAY MODALI -->
     <div id="deleteConfirmModal" class="fixed inset-0 bg-slate-900/90 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-xs border border-rose-200">
             <div class="text-center space-y-2">
@@ -518,7 +518,7 @@
         </div>
     </div>
 
-    <!-- MODAL 2: ZİMMET ATAMA & AYNİYAT DEPO TİK ÖZELLİĞİ -->
+    <!-- MODAL 2: ZİMMET ATAMA -->
     <div id="editZimmetModal" class="fixed inset-0 bg-slate-900/80 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-xs">
             <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b pb-2">
@@ -999,7 +999,6 @@
             loadHistoryFromSheets();
         }
 
-        // ZİMMETLİ CİHAZI HURDAYA AYIRMA (ŞIK MODAL UYARI İLE)
         async function saveInventoryDeviceWithReason(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtnEdit');
