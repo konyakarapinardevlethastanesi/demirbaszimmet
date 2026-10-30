@@ -24,8 +24,17 @@
             body * { visibility: hidden !important; }
             .no-print { display: none !important; }
             
-            /* A4 Baskı Görünürlük Düzeltmesi */
-            body.print-inventory-mode #a4PrintArea { display: block !important; position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; padding: 10mm !important; background: white !important; z-index: 99999; }
+            /* A4 Tam Sayfa Baskı Düzenlemesi */
+            body.print-inventory-mode #a4PrintArea { 
+                display: block !important; 
+                position: absolute !important; 
+                left: 0 !important; 
+                top: 0 !important; 
+                width: 100% !important; 
+                padding: 5mm !important; 
+                background: white !important; 
+                z-index: 99999; 
+            }
             body.print-inventory-mode #a4PrintArea * { visibility: visible !important; }
             
             body.print-single-qr-mode #printTargetCard,
@@ -37,7 +46,7 @@
                 margin: 0 !important;
                 box-shadow: none !important;
             }
-            @page { size: auto; margin: 0mm; }
+            @page { size: A4 landscape; margin: 8mm; }
         }
     </style>
 </head>
@@ -243,7 +252,7 @@
                 </div>
             </section>
 
-            <!-- TAB 2: ZİMMET İŞLEMLERİ & ATAMA (Sıralama Ölçütü Eklendi) -->
+            <!-- TAB 2: ZİMMET İŞLEMLERİ & ATAMA (Zimmet Tarihi & Tarihe Göre Sıralama Eklendi) -->
             <section id="zimmet-tab" class="admin-tab-content hidden space-y-4">
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
                     <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
@@ -255,6 +264,8 @@
                         </div>
                         <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                             <select id="zimmetSortSelect" onchange="renderZimmetTable()" class="p-1.5 border rounded-lg text-xs font-semibold bg-slate-50">
+                                <option value="tarihDesc">Sırala: Zimmet Tarihi (En Yeni)</option>
+                                <option value="tarihAsc">Sırala: Zimmet Tarihi (En Eski)</option>
                                 <option value="kunye">Sırala: Künye No</option>
                                 <option value="malzeme">Sırala: Malzeme (A-Z)</option>
                                 <option value="birim">Sırala: Birim (A-Z)</option>
@@ -280,6 +291,7 @@
                                     <th class="p-3">Malzeme Tanımı</th>
                                     <th class="p-3">Zimmet Yeri / Birim</th>
                                     <th class="p-3">Zimmetli Personel</th>
+                                    <th class="p-3">Zimmet Tarihi</th>
                                     <th class="p-3 text-center">Zimmet İşlemi</th>
                                 </tr>
                             </thead>
@@ -320,7 +332,7 @@
                 </div>
             </section>
 
-            <!-- TAB 4: QR ETİKET -->
+            <!-- TAB 4: QR ETİKET (Yenilenmiş Tasarım: Siyah Şeritsiz + Logolu) -->
             <section id="qrprint-tab" class="admin-tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <div class="lg:col-span-6 bg-white p-5 rounded-xl shadow-sm border space-y-3">
@@ -347,12 +359,17 @@
                             </button>
                         </div>
 
+                        <!-- YENİ QR ETİKET TASARIMI (Siyah Şerit Kaldırıldı, Logo Eklendi) -->
                         <div id="printTargetCard" class="official-tag-card rounded shadow-sm overflow-hidden my-auto">
                             <div class="border border-slate-900 flex flex-col bg-white">
-                                <div class="bg-slate-800 text-white px-2 py-1 flex items-center justify-between border-b border-slate-900">
-                                    <div class="text-center flex-grow leading-tight">
-                                        <div class="text-[10px] font-extrabold">T.C. SAĞLIK BAKANLIĞI</div>
-                                        <div class="text-[9px] font-bold text-slate-200">KARAPINAR DEVLET HASTANESİ</div>
+                                <!-- Üst Başlık (Beyaz zeminüzerine logolu ve lacivert başlık) -->
+                                <div class="bg-white text-slate-900 px-2 py-1 flex items-center justify-between border-b border-slate-900">
+                                    <div class="w-8 h-8 shrink-0 flex items-center justify-center p-0.5">
+                                        <img src="logo.png" alt="Logo" class="w-full h-full object-contain">
+                                    </div>
+                                    <div class="text-center flex-grow leading-tight pr-4">
+                                        <div class="text-[10px] font-black uppercase text-slate-900">T.C. SAĞLIK BAKANLIĞI</div>
+                                        <div class="text-[9px] font-bold text-slate-800">KARAPINAR DEVLET HASTANESİ</div>
                                     </div>
                                 </div>
                                 <div class="flex flex-row border-b border-slate-900">
@@ -397,33 +414,37 @@
         </footer>
     </div>
 
-    <!-- A4 LİSTE ÇIKTISI -->
+    <!-- YENİLENMİŞ A4 TAM SAYFA ENVANTER LİSTE ÇIKTISI (TÜM VERİLER DAHİL) -->
     <div id="a4PrintArea" class="hidden">
-        <div class="text-center space-y-1 border-b-2 border-slate-900 pb-3 mb-4">
-            <h1 class="text-base font-bold">T.C. SAĞLIK BAKANLIĞI</h1>
-            <h2 class="text-sm font-semibold">Konya İl Sağlık Müdürlüğü</h2>
-            <h3 class="text-sm font-extrabold">Konya Karapınar Devlet Hastanesi Başhekimliği</h3>
-            <p class="text-xs font-bold underline mt-2">AYNİYAT TAŞINIR DEPOSUNA KAYITLI CİHAZLAR LİSTESİ</p>
+        <div class="text-center space-y-1 border-b-2 border-slate-900 pb-2 mb-3">
+            <h1 class="text-sm font-bold uppercase">T.C. SAĞLIK BAKANLIĞI • KONYA İL SAĞLIK MÜDÜRLÜĞÜ</h1>
+            <h2 class="text-base font-black uppercase">KONYA KARAPINAR DEVLET HASTANESİ BAŞHEKİMLİĞİ</h2>
+            <p class="text-xs font-bold underline">RESMİ AYANİYAT TAŞINIR / ENVANTER DETAY LİSTESİ</p>
         </div>
-        <table class="w-full text-left text-[11px] border-collapse border border-slate-400 my-4">
+        <table class="w-full text-left text-[9px] border-collapse border border-slate-900">
             <thead>
-                <tr class="bg-slate-200 font-bold">
-                    <th class="border p-1.5 text-center w-8">#</th>
-                    <th class="border p-1.5">Künye No</th>
-                    <th class="border p-1.5">Demirbaş No</th>
-                    <th class="border p-1.5">Malzeme Tanımı</th>
-                    <th class="border p-1.5">Marka / Model</th>
-                    <th class="border p-1.5">Seri No</th>
-                    <th class="border p-1.5">Birim</th>
-                    <th class="border p-1.5">Durum</th>
-                    <th class="border p-1.5">Personel</th>
+                <tr class="bg-slate-200 font-black border-b border-slate-900 uppercase">
+                    <th class="border border-slate-900 p-1 text-center w-6">#</th>
+                    <th class="border border-slate-900 p-1">Künye No</th>
+                    <th class="border border-slate-900 p-1">Malzeme Tanımı</th>
+                    <th class="border border-slate-900 p-1">Marka / Model</th>
+                    <th class="border border-slate-900 p-1">Seri No</th>
+                    <th class="border border-slate-900 p-1">Bütçe</th>
+                    <th class="border border-slate-900 p-1">Demirbaş No</th>
+                    <th class="border border-slate-900 p-1">Sicil No</th>
+                    <th class="border border-slate-900 p-1">Edinme Yılı</th>
+                    <th class="border border-slate-900 p-1">Birim / Oda</th>
+                    <th class="border border-slate-900 p-1">Zimmetli Personel</th>
+                    <th class="border border-slate-900 p-1">Durum</th>
+                    <th class="border border-slate-900 p-1">Tedarikçi / Türü</th>
+                    <th class="border border-slate-900 p-1">Açıklama</th>
                 </tr>
             </thead>
             <tbody id="a4PrintTableBody"></tbody>
         </table>
     </div>
 
-    <!-- MODAL 1: CİHAZ DÜZENLEME VE NEDEN ALANI -->
+    <!-- MODAL 1: CİHAZ DÜZENLEME -->
     <div id="editInventoryModal" class="fixed inset-0 bg-slate-900/80 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl text-xs">
             <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b pb-2">
@@ -453,16 +474,35 @@
                 </div>
                 <div>
                     <label class="block font-bold text-rose-600 mb-1">İşlem / Değişiklik / Silme Nedeni *</label>
-                    <textarea id="invEditReason" required rows="2" placeholder="Örn: Durum aktiften hurdaya çevrildi..." class="w-full p-2 border border-rose-300 rounded-lg font-medium"></textarea>
+                    <textarea id="invEditReason" required rows="2" placeholder="Örn: Durum aktiften bakıma alındı..." class="w-full p-2 border border-rose-300 rounded-lg font-medium"></textarea>
                 </div>
                 <div class="flex justify-between items-center pt-2 border-t">
-                    <button type="button" onclick="confirmDeleteDeviceWithReasonDirect()" class="text-rose-600 hover:underline font-bold flex items-center gap-1"><i class="fa-solid fa-trash-can"></i> Cihazı Tamamen Sil</button>
+                    <button type="button" onclick="openDeleteConfirmModal()" class="text-rose-600 hover:underline font-bold flex items-center gap-1"><i class="fa-solid fa-trash-can"></i> Cihazı Tamamen Sil</button>
                     <div class="flex gap-2">
                         <button type="button" onclick="closeModals()" class="px-3 py-1.5 bg-slate-200 text-slate-700 rounded-lg font-semibold">İptal</button>
                         <button type="submit" class="px-3 py-1.5 bg-slate-900 text-white rounded-lg font-bold">Kaydet ve Arşive İşle</button>
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL 1.1: CİHAZ SİLME ONAY MODALI (NEDEN SORGULAMA) -->
+    <div id="deleteConfirmModal" class="fixed inset-0 bg-slate-900/90 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-xs border border-rose-200">
+            <div class="text-center space-y-2">
+                <i class="fa-solid fa-triangle-exclamation text-4xl text-rose-500"></i>
+                <h3 class="text-base font-bold text-slate-900">Cihazı Silmek İstediğinize Emin Misiniz?</h3>
+                <p class="text-slate-500 text-[11px]">Bu işlem cihazı envanterden kalıcı olarak silecektir. Lütfen silme nedeninizi belirtiniz.</p>
+            </div>
+            <div>
+                <label class="block font-bold text-rose-600 mb-1">Silme Nedeni *</label>
+                <textarea id="deleteReasonInput" required rows="2" placeholder="Örn: Hatalı kayıt, mükerrer veri, imha edildi..." class="w-full p-2 border border-rose-300 rounded-lg font-medium"></textarea>
+            </div>
+            <div class="flex justify-end gap-2 pt-2 border-t">
+                <button type="button" onclick="document.getElementById('deleteConfirmModal').classList.add('hidden')" class="px-3 py-2 bg-slate-200 text-slate-700 rounded-lg font-semibold">İptal</button>
+                <button type="button" onclick="executeDeviceDelete()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-bold shadow">Sil ve Arşive Kaydet</button>
+            </div>
         </div>
     </div>
 
@@ -694,7 +734,7 @@
             }).join('');
         }
 
-        // 2. SEKME: ZİMMET TABLOSU VE SIRALAMA ÖLÇÜTÜ MANTIĞI
+        // 2. SEKME: ZİMMET TABLOSU VE TARİHE GÖRE SIRALAMA
         function renderZimmetTable() {
             const query = document.getElementById("zimmetSearchInput").value.toLowerCase();
             const filterType = document.getElementById("zimmetFilterSelect").value;
@@ -717,9 +757,17 @@
                 return matchesQuery && matchesFilter;
             });
 
-            // Sıralama Ölçütüne Göre Sırala
+            // Sıralama Mantığı (Zimmet Tarihi dahil)
             filtered.sort((a, b) => {
-                if (sortBy === 'kunye') {
+                if (sortBy === 'tarihDesc') {
+                    const tA = new Date(getDevProp(a, 'tarih', 16) || 0).getTime();
+                    const tB = new Date(getDevProp(b, 'tarih', 16) || 0).getTime();
+                    return tB - tA;
+                } else if (sortBy === 'tarihAsc') {
+                    const tA = new Date(getDevProp(a, 'tarih', 16) || 0).getTime();
+                    const tB = new Date(getDevProp(b, 'tarih', 16) || 0).getTime();
+                    return tA - tB;
+                } else if (sortBy === 'kunye') {
                     return String(getDevProp(a, 'kunyeNo', 1)).localeCompare(String(getDevProp(b, 'kunyeNo', 1)), 'tr', {numeric: true});
                 } else if (sortBy === 'malzeme') {
                     return String(getDevProp(a, 'malzemeTanimi', 6)).localeCompare(String(getDevProp(b, 'malzemeTanimi', 6)), 'tr');
@@ -732,7 +780,7 @@
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">Kayıt bulunamadı.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">Kayıt bulunamadı.</td></tr>`;
                 return;
             }
 
@@ -743,11 +791,17 @@
                 const malzeme = getDevProp(d, 'malzemeTanimi', 6) || '-';
                 const birim = getDevProp(d, 'birim', 11) || 'Depo';
                 const personel = getDevProp(d, 'personel', 12) || 'Zimmetsiz (Depoda)';
+                const rawTarih = getDevProp(d, 'tarih', 16);
 
                 const isZimmetli = personel && !personel.includes("Zimmetsiz");
                 const personelDisplay = isZimmetli 
                     ? `<span class="px-2.5 py-1 rounded bg-blue-100 text-blue-900 font-bold text-xs"><i class="fa-solid fa-user mr-1"></i>${personel}</span>`
                     : `<span class="text-slate-400 font-medium italic">Zimmetsiz (Depoda)</span>`;
+
+                let tarihDisplay = "-";
+                if (isZimmetli && rawTarih && rawTarih !== "-") {
+                    try { tarihDisplay = new Date(rawTarih).toLocaleDateString('tr-TR'); } catch(e) { tarihDisplay = rawTarih; }
+                }
 
                 return `
                     <tr class="hover:bg-slate-50 border-b border-slate-100">
@@ -756,6 +810,7 @@
                         <td class="p-3 font-bold uppercase text-slate-800">${malzeme}</td>
                         <td class="p-3 font-semibold text-slate-700">${birim}</td>
                         <td class="p-3">${personelDisplay}</td>
+                        <td class="p-3 font-mono text-xs font-semibold text-slate-600">${tarihDisplay}</td>
                         <td class="p-3 text-center">
                             <button onclick="openZimmetModal('${id}')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 shadow-sm">
                                 <i class="fa-solid fa-user-pen mr-1"></i> Zimmetle / Değiştir
@@ -890,13 +945,27 @@
         function closeModals() {
             document.getElementById('editInventoryModal').classList.add('hidden');
             document.getElementById('editZimmetModal').classList.add('hidden');
+            document.getElementById('deleteConfirmModal').classList.add('hidden');
         }
 
-        async function confirmDeleteDeviceWithReasonDirect() {
+        // 5. MADDE: CİHAZİ SİLMEK İÇİN SORGULAMA KUTUSU AÇMA
+        function openDeleteConfirmModal() {
+            document.getElementById('deleteReasonInput').value = "";
+            document.getElementById('deleteConfirmModal').classList.remove('hidden');
+        }
+
+        async function executeDeviceDelete() {
             const id = document.getElementById('invEditId').value;
-            const kunye = document.getElementById('invEditKunye').value;
-            const malzeme = document.getElementById('invEditMalzeme').value;
-            const reason = document.getElementById('invEditReason').value.trim() || "Cihaz Envanterden Tamamen Silindi";
+            const reason = document.getElementById('deleteReasonInput').value.trim();
+
+            if (!reason) {
+                alert("Lütfen silme nedeninizi yazınız!");
+                return;
+            }
+
+            const d = globalDevices.find(item => String(getDevProp(item, 'id', 0)) === String(id));
+            const kunye = d ? getDevProp(d, 'kunyeNo', 1) : "-";
+            const malzeme = d ? getDevProp(d, 'malzemeTanimi', 6) : "-";
             const tarih = new Date().toISOString();
 
             await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "delete", sheet: "EnvanterYeni", id: id }) });
@@ -907,15 +976,24 @@
             loadHistoryFromSheets();
         }
 
+        // 1. MADDE: ZİMMETLİ CİHAZI HURDAYA AYIRMA ENGELİ
         async function saveInventoryDeviceWithReason(e) {
             e.preventDefault();
             const id = document.getElementById('invEditId').value;
             const d = globalDevices.find(item => String(getDevProp(item, 'id', 0)) === String(id));
             if(!d) return;
 
+            const yeniDurum = document.getElementById('invEditDurum').value;
+            const mevculPersonel = getDevProp(d, 'personel', 12) || '';
+
+            // Zimmetli Cihazı Hurdaya Ayırmayı Engelleme
+            if (yeniDurum === "Hurda" && mevculPersonel && !mevculPersonel.includes("Zimmetsiz")) {
+                alert(`⚠️ UYARI / ENGEL:\n\nBu cihaz (${mevculPersonel}) personeline zimmetlidir!\n\nGrafiklerde ve kayıtlarda çakışma yaşanmaması için lütfen önce "Zimmet İşlemleri" sekmesinden cihazın zimmetini kaldırıp Depoya alınız, ardından Hurdaya ayırınız.`);
+                return;
+            }
+
             const kunye = getDevProp(d, 'kunyeNo', 1);
             const malzeme = document.getElementById('invEditMalzeme').value;
-            const yeniDurum = document.getElementById('invEditDurum').value;
             const reason = document.getElementById('invEditReason').value.trim() || "Bilgiler Güncellendi";
             const tarih = new Date().toISOString();
 
@@ -1096,19 +1174,25 @@
             `;
         }
 
+        // 4. MADDE: TAM SAYFA A4 LİSTE (TÜM VERİ SÜTUNLARI DAHİL)
         function printInventoryA4List() {
             const tbody = document.getElementById('a4PrintTableBody');
             tbody.innerHTML = globalDevices.map((d, index) => `
-                <tr class="border-b border-slate-300">
-                    <td class="border p-1.5 text-center font-bold">${index + 1}</td>
-                    <td class="border p-1.5 font-mono font-bold">${getDevProp(d, 'kunyeNo', 1)}</td>
-                    <td class="border p-1.5 font-mono">${getDevProp(d, 'demirbasNo', 4) || '-'}</td>
-                    <td class="border p-1.5 font-bold uppercase">${getDevProp(d, 'malzemeTanimi', 6) || '-'}</td>
-                    <td class="border p-1.5">${getDevProp(d, 'marka', 7) || '-'} / ${getDevProp(d, 'model', 8) || '-'}</td>
-                    <td class="border p-1.5 font-mono">${getDevProp(d, 'seriNo', 9) || '-'}</td>
-                    <td class="border p-1.5">${getDevProp(d, 'birim', 11) || '-'}</td>
-                    <td class="border p-1.5 font-bold">${getDevProp(d, 'durum', 10) || 'Aktif'}</td>
-                    <td class="border p-1.5 font-bold">${getDevProp(d, 'personel', 12) || 'Zimmetsiz'}</td>
+                <tr class="border-b border-slate-400">
+                    <td class="border border-slate-900 p-1 text-center font-bold">${index + 1}</td>
+                    <td class="border border-slate-900 p-1 font-mono font-bold">${getDevProp(d, 'kunyeNo', 1)}</td>
+                    <td class="border border-slate-900 p-1 font-bold uppercase">${getDevProp(d, 'malzemeTanimi', 6) || '-'}</td>
+                    <td class="border border-slate-900 p-1">${getDevProp(d, 'marka', 7) || '-'} / ${getDevProp(d, 'model', 8) || '-'}</td>
+                    <td class="border border-slate-900 p-1 font-mono">${getDevProp(d, 'seriNo', 9) || '-'}</td>
+                    <td class="border border-slate-900 p-1">${getDevProp(d, 'butceTuru', 2) || '-'}</td>
+                    <td class="border border-slate-900 p-1 font-mono">${getDevProp(d, 'demirbasNo', 4) || '-'}</td>
+                    <td class="border border-slate-900 p-1 font-mono">${getDevProp(d, 'sicilNo', 5) || '-'}</td>
+                    <td class="border border-slate-900 p-1 text-center">${getDevProp(d, 'edinmeYili', 3) || '-'}</td>
+                    <td class="border border-slate-900 p-1">${getDevProp(d, 'birim', 11) || '-'}</td>
+                    <td class="border border-slate-900 p-1 font-bold">${getDevProp(d, 'personel', 12) || 'Zimmetsiz'}</td>
+                    <td class="border border-slate-900 p-1 font-bold">${getDevProp(d, 'durum', 10) || 'Aktif'}</td>
+                    <td class="border border-slate-900 p-1">${getDevProp(d, 'tedarikci', 14) || '-'} / ${getDevProp(d, 'tedarikTuru', 13) || '-'}</td>
+                    <td class="border border-slate-900 p-1">${getDevProp(d, 'aciklama', 15) || '-'}</td>
                 </tr>
             `).join('');
 
