@@ -11,11 +11,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style id="dynamicPrinterStyle">
         body { font-family: 'Inter', sans-serif; }
+        button:active { transform: scale(0.97); transition: transform 0.1s ease; }
         .official-tag-card {
             width: 520px !important;
             min-width: 520px !important;
             background: #ffffff !important;
-            border: 2px solid #1e293b !important;
+            border: 2px solid #0f172a !important;
             padding: 4px !important;
             color: #0f172a !important;
             box-sizing: border-box !important;
@@ -24,19 +25,12 @@
             body * { visibility: hidden !important; }
             .no-print { display: none !important; }
             
-            /* A4 Tam Sayfa Baskı Düzenlemesi */
-            body.print-inventory-mode #a4PrintArea { 
-                display: block !important; 
-                position: absolute !important; 
-                left: 0 !important; 
-                top: 0 !important; 
-                width: 100% !important; 
-                padding: 5mm !important; 
-                background: white !important; 
-                z-index: 99999; 
-            }
-            body.print-inventory-mode #a4PrintArea * { visibility: visible !important; }
+            /* A4 Liste Yazdırma Düzeltmesi (Boş Sayfa Hatası Giderildi) */
+            body.print-inventory-mode, body.print-inventory-mode * { visibility: visible !important; }
+            body.print-inventory-mode { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; background: white !important; }
+            body.print-inventory-mode #a4PrintArea { display: block !important; position: relative !important; width: 100% !important; padding: 5mm !important; }
             
+            /* Tekil Etiket Yazdırma Düzeltmesi */
             body.print-single-qr-mode #printTargetCard,
             body.print-single-qr-mode #printTargetCard * { visibility: visible !important; }
             body.print-single-qr-mode #printTargetCard { 
@@ -46,7 +40,7 @@
                 margin: 0 !important;
                 box-shadow: none !important;
             }
-            @page { size: A4 landscape; margin: 8mm; }
+            @page { size: auto; margin: 0mm; }
         }
     </style>
 </head>
@@ -209,7 +203,7 @@
                                 <div><label class="block font-bold text-slate-700 mb-0.5">Tedarik Türü</label><input type="text" id="newTedarikTuru" placeholder="Örn: Satın Alma" class="w-full p-2 border rounded-lg"></div>
                             </div>
                             <div><label class="block font-bold text-slate-700 mb-0.5">Açıklama</label><textarea id="newAciklama" rows="2" placeholder="Örn: Ek notlar ve açıklamalar..." class="w-full p-2 border rounded-lg"></textarea></div>
-                            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 shadow">
+                            <button type="submit" id="submitBtnDevice" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 shadow transition">
                                 <i class="fa-solid fa-floppy-disk"></i> Envantere Kaydet (Depoya Al)
                             </button>
                         </form>
@@ -228,10 +222,10 @@
                                     <option value="Bakımda">Bakımda</option>
                                     <option value="Hurda">Hurda</option>
                                 </select>
-                                <button onclick="printInventoryA4List()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow">
+                                <button onclick="printInventoryA4List()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow transition">
                                     <i class="fa-solid fa-print"></i> A4 Liste
                                 </button>
-                                <button onclick="loadDevicesFromSheets()" class="text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-arrows-rotate"></i></button>
+                                <button onclick="loadDevicesFromSheets()" class="text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold px-2.5 py-1.5 rounded-lg transition"><i class="fa-solid fa-arrows-rotate"></i></button>
                             </div>
                         </div>
                         <div class="overflow-x-auto max-h-[550px]">
@@ -252,7 +246,7 @@
                 </div>
             </section>
 
-            <!-- TAB 2: ZİMMET İŞLEMLERİ & ATAMA (Zimmet Tarihi & Tarihe Göre Sıralama Eklendi) -->
+            <!-- TAB 2: ZİMMET İŞLEMLERİ & ATAMA -->
             <section id="zimmet-tab" class="admin-tab-content hidden space-y-4">
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
                     <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
@@ -311,7 +305,7 @@
                                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                                 <input type="text" id="historySearchInput" oninput="renderHistoryTable()" placeholder="Geçmişte ara (künye, personel)..." class="w-full pl-8 pr-3 py-1.5 border rounded-lg text-xs bg-white">
                             </div>
-                            <button onclick="loadHistoryFromSheets()" class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg"><i class="fa-solid fa-arrows-rotate"></i> Yenile</button>
+                            <button onclick="loadHistoryFromSheets()" class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-arrows-rotate"></i> Yenile</button>
                         </div>
                     </div>
                     <div class="overflow-x-auto max-h-[500px]">
@@ -332,7 +326,7 @@
                 </div>
             </section>
 
-            <!-- TAB 4: QR ETİKET (Yenilenmiş Tasarım: Siyah Şeritsiz + Logolu) -->
+            <!-- TAB 4: QR ETİKET (Orijinal Siyah Şeritli ve Logolu Tasarım) -->
             <section id="qrprint-tab" class="admin-tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <div class="lg:col-span-6 bg-white p-5 rounded-xl shadow-sm border space-y-3">
@@ -359,17 +353,16 @@
                             </button>
                         </div>
 
-                        <!-- YENİ QR ETİKET TASARIMI (Siyah Şerit Kaldırıldı, Logo Eklendi) -->
+                        <!-- ORİJİNAL SİYAH ŞERİTLİ VE LOGOLU ETİKET KARTI -->
                         <div id="printTargetCard" class="official-tag-card rounded shadow-sm overflow-hidden my-auto">
                             <div class="border border-slate-900 flex flex-col bg-white">
-                                <!-- Üst Başlık (Beyaz zeminüzerine logolu ve lacivert başlık) -->
-                                <div class="bg-white text-slate-900 px-2 py-1 flex items-center justify-between border-b border-slate-900">
-                                    <div class="w-8 h-8 shrink-0 flex items-center justify-center p-0.5">
+                                <div class="bg-slate-900 text-white px-2 py-1 flex items-center justify-between border-b border-slate-900">
+                                    <div class="w-7 h-7 shrink-0 flex items-center justify-center p-0.5 bg-white rounded">
                                         <img src="logo.png" alt="Logo" class="w-full h-full object-contain">
                                     </div>
                                     <div class="text-center flex-grow leading-tight pr-4">
-                                        <div class="text-[10px] font-black uppercase text-slate-900">T.C. SAĞLIK BAKANLIĞI</div>
-                                        <div class="text-[9px] font-bold text-slate-800">KARAPINAR DEVLET HASTANESİ</div>
+                                        <div class="text-[10px] font-extrabold">T.C. SAĞLIK BAKANLIĞI</div>
+                                        <div class="text-[9px] font-bold text-slate-200">KARAPINAR DEVLET HASTANESİ</div>
                                     </div>
                                 </div>
                                 <div class="flex flex-row border-b border-slate-900">
@@ -414,12 +407,12 @@
         </footer>
     </div>
 
-    <!-- YENİLENMİŞ A4 TAM SAYFA ENVANTER LİSTE ÇIKTISI (TÜM VERİLER DAHİL) -->
+    <!-- A4 LİSTE YAZDIRMA ALANI -->
     <div id="a4PrintArea" class="hidden">
         <div class="text-center space-y-1 border-b-2 border-slate-900 pb-2 mb-3">
             <h1 class="text-sm font-bold uppercase">T.C. SAĞLIK BAKANLIĞI • KONYA İL SAĞLIK MÜDÜRLÜĞÜ</h1>
             <h2 class="text-base font-black uppercase">KONYA KARAPINAR DEVLET HASTANESİ BAŞHEKİMLİĞİ</h2>
-            <p class="text-xs font-bold underline">RESMİ AYANİYAT TAŞINIR / ENVANTER DETAY LİSTESİ</p>
+            <p class="text-xs font-bold underline">RESMİ AYNİYAT TAŞINIR / ENVANTER DETAY LİSTESİ</p>
         </div>
         <table class="w-full text-left text-[9px] border-collapse border border-slate-900">
             <thead>
@@ -444,9 +437,9 @@
         </table>
     </div>
 
-    <!-- MODAL 1: CİHAZ DÜZENLEME -->
+    <!-- MODAL 1: CİHAZ DÜZENLEME (TÜM KAYIT ALANLARI EKLENDİ) -->
     <div id="editInventoryModal" class="fixed inset-0 bg-slate-900/80 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl text-xs">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl text-xs max-h-[90vh] overflow-y-auto">
             <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b pb-2">
                 <i class="fa-solid fa-laptop-medical text-slate-900"></i> Cihaz / Teknik Bilgi Düzenle
             </h3>
@@ -462,32 +455,51 @@
                         </select>
                     </div>
                 </div>
-                <div><label class="block font-bold text-slate-700 mb-1">Malzeme Tanımı</label><input type="text" id="invEditMalzeme" required class="w-full p-2 border rounded-lg font-bold uppercase"></div>
-                <div class="grid grid-cols-2 gap-2">
+                <div><label class="block font-bold text-slate-700 mb-1">Malzeme Tanımı *</label><input type="text" id="invEditMalzeme" required class="w-full p-2 border rounded-lg font-bold uppercase"></div>
+                <div class="grid grid-cols-3 gap-2">
                     <div><label class="block font-bold text-slate-700 mb-1">Marka</label><input type="text" id="invEditMarka" class="w-full p-2 border rounded-lg"></div>
                     <div><label class="block font-bold text-slate-700 mb-1">Model</label><input type="text" id="invEditModel" class="w-full p-2 border rounded-lg"></div>
+                    <div><label class="block font-bold text-slate-700 mb-1">Seri No</label><input type="text" id="invEditSeri" class="w-full p-2 border rounded-lg font-mono"></div>
                 </div>
                 <div class="grid grid-cols-3 gap-2">
-                    <div><label class="block font-bold text-slate-700 mb-1">Seri No</label><input type="text" id="invEditSeri" class="w-full p-2 border rounded-lg font-mono"></div>
                     <div><label class="block font-bold text-slate-700 mb-1">Demirbaş No</label><input type="text" id="invEditDemirbas" class="w-full p-2 border rounded-lg font-mono"></div>
                     <div><label class="block font-bold text-slate-700 mb-1">Sicil No</label><input type="text" id="invEditSicil" class="w-full p-2 border rounded-lg font-mono"></div>
+                    <div><label class="block font-bold text-slate-700 mb-1">Bütçe Türü</label><input type="text" id="invEditButce" class="w-full p-2 border rounded-lg"></div>
                 </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div><label class="block font-bold text-slate-700 mb-1">Edinme Yılı</label><input type="text" id="invEditEdinme" class="w-full p-2 border rounded-lg"></div>
+                    <div><label class="block font-bold text-slate-700 mb-1">Tedarikçi</label><input type="text" id="invEditTedarikci" class="w-full p-2 border rounded-lg"></div>
+                    <div><label class="block font-bold text-slate-700 mb-1">Tedarik Türü</label><input type="text" id="invEditTedarikTuru" class="w-full p-2 border rounded-lg"></div>
+                </div>
+                <div><label class="block font-bold text-slate-700 mb-1">Açıklama</label><textarea id="invEditAciklama" rows="2" class="w-full p-2 border rounded-lg"></textarea></div>
                 <div>
                     <label class="block font-bold text-rose-600 mb-1">İşlem / Değişiklik / Silme Nedeni *</label>
-                    <textarea id="invEditReason" required rows="2" placeholder="Örn: Durum aktiften bakıma alındı..." class="w-full p-2 border border-rose-300 rounded-lg font-medium"></textarea>
+                    <textarea id="invEditReason" required rows="2" placeholder="Örn: Bilgiler güncellendi..." class="w-full p-2 border border-rose-300 rounded-lg font-medium"></textarea>
                 </div>
                 <div class="flex justify-between items-center pt-2 border-t">
                     <button type="button" onclick="openDeleteConfirmModal()" class="text-rose-600 hover:underline font-bold flex items-center gap-1"><i class="fa-solid fa-trash-can"></i> Cihazı Tamamen Sil</button>
                     <div class="flex gap-2">
                         <button type="button" onclick="closeModals()" class="px-3 py-1.5 bg-slate-200 text-slate-700 rounded-lg font-semibold">İptal</button>
-                        <button type="submit" class="px-3 py-1.5 bg-slate-900 text-white rounded-lg font-bold">Kaydet ve Arşive İşle</button>
+                        <button type="submit" id="submitBtnEdit" class="px-4 py-1.5 bg-slate-900 text-white rounded-lg font-bold transition">Kaydet ve Arşive İşle</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL 1.1: CİHAZ SİLME ONAY MODALI (NEDEN SORGULAMA) -->
+    <!-- MODAL 1.1: ŞIK AÇILIR PENCERE - ZİMMETLİ HURDAYA AYIRMA UYARI MODALI -->
+    <div id="hurdaWarningModal" class="fixed inset-0 bg-slate-900/90 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-xs border border-amber-200 text-center">
+            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-900">Zimmetli Cihaz Hurdaya Ayrılamaz!</h3>
+            <p id="hurdaWarningText" class="text-slate-600 text-xs leading-relaxed">Bu cihaz halen bir personele zimmetlidir. Grafiklerde ve kayıtlarda çakışma yaşanmaması için önce zimmeti kaldırıp Depoya alınız.</p>
+            <button type="button" onclick="document.getElementById('hurdaWarningModal').classList.add('hidden')" class="w-full py-2.5 bg-slate-900 text-white font-bold rounded-xl shadow">Anladım, Kapat</button>
+        </div>
+    </div>
+
+    <!-- MODAL 1.2: CİHAZ SİLME ONAY MODALI (NEDEN SORGULAMA) -->
     <div id="deleteConfirmModal" class="fixed inset-0 bg-slate-900/90 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-xs border border-rose-200">
             <div class="text-center space-y-2">
@@ -497,7 +509,7 @@
             </div>
             <div>
                 <label class="block font-bold text-rose-600 mb-1">Silme Nedeni *</label>
-                <textarea id="deleteReasonInput" required rows="2" placeholder="Örn: Hatalı kayıt, mükerrer veri, imha edildi..." class="w-full p-2 border border-rose-300 rounded-lg font-medium"></textarea>
+                <textarea id="deleteReasonInput" required rows="2" placeholder="Örn: Hatalı kayıt, mükerrer veri..." class="w-full p-2 border border-rose-300 rounded-lg font-medium"></textarea>
             </div>
             <div class="flex justify-end gap-2 pt-2 border-t">
                 <button type="button" onclick="document.getElementById('deleteConfirmModal').classList.add('hidden')" class="px-3 py-2 bg-slate-200 text-slate-700 rounded-lg font-semibold">İptal</button>
@@ -526,7 +538,7 @@
                 
                 <div class="flex justify-end gap-2 pt-2 border-t">
                     <button type="button" onclick="closeModals()" class="px-3 py-1.5 bg-slate-200 text-slate-700 rounded-lg font-semibold">İptal</button>
-                    <button type="submit" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg font-bold">Zimmetle / Güncelle</button>
+                    <button type="submit" id="submitBtnZimmet" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg font-bold transition">Zimmetle / Güncelle</button>
                 </div>
             </form>
         </div>
@@ -649,38 +661,46 @@
 
         async function addNewDevice(e) {
             e.preventDefault();
-            const id = Date.now();
-            const kunye = document.getElementById("newKunye").value.trim();
-            const butceTuru = document.getElementById("newButceTuru").value.trim();
-            const edinmeYili = document.getElementById("newEdinmeYili").value.trim();
-            const demirbasNo = document.getElementById("newDemirbasNo").value.trim();
-            const sicilNo = document.getElementById("newSicilNo").value.trim();
-            const malzemeTanimi = document.getElementById("newMalzemeTanimi").value.trim();
-            const marka = document.getElementById("newMarka").value.trim();
-            const model = document.getElementById("newModel").value.trim();
-            const seriNo = document.getElementById("newSeriNo").value.trim();
-            const durum = document.getElementById("newDurum").value;
-            const tedarikTuru = document.getElementById("newTedarikTuru").value.trim();
-            const tedarikci = document.getElementById("newTedarikci").value.trim();
-            const aciklama = document.getElementById("newAciklama").value.trim();
-            
-            const birim = "Ayniyat Taşınır Deposu";
-            const personel = "Zimmetsiz (Depoda)";
-            const tarih = new Date().toISOString();
+            const btn = document.getElementById('submitBtnDevice');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Kaydediliyor...`;
 
-            const row = [
-                id, kunye, butceTuru, edinmeYili, demirbasNo, sicilNo, 
-                malzemeTanimi, marka, model, seriNo, durum, 
-                birim, personel, tedarikTuru, tedarikci, aciklama, tarih
-            ];
+            try {
+                const id = Date.now();
+                const kunye = document.getElementById("newKunye").value.trim();
+                const butceTuru = document.getElementById("newButceTuru").value.trim();
+                const edinmeYili = document.getElementById("newEdinmeYili").value.trim();
+                const demirbasNo = document.getElementById("newDemirbasNo").value.trim();
+                const sicilNo = document.getElementById("newSicilNo").value.trim();
+                const malzemeTanimi = document.getElementById("newMalzemeTanimi").value.trim();
+                const marka = document.getElementById("newMarka").value.trim();
+                const model = document.getElementById("newModel").value.trim();
+                const seriNo = document.getElementById("newSeriNo").value.trim();
+                const durum = document.getElementById("newDurum").value;
+                const tedarikTuru = document.getElementById("newTedarikTuru").value.trim();
+                const tedarikci = document.getElementById("newTedarikci").value.trim();
+                const aciklama = document.getElementById("newAciklama").value.trim();
+                
+                const birim = "Ayniyat Taşınır Deposu";
+                const personel = "Zimmetsiz (Depoda)";
+                const tarih = new Date().toISOString();
 
-            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "add", sheet: "EnvanterYeni", row: row }) });
-            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), tarih, kunye, malzemeTanimi, "Envantere Yeni Cihaz Eklendi", personel, durum, "İlk Kayıt Oluşturuldu"] }) });
+                const row = [
+                    id, kunye, butceTuru, edinmeYili, demirbasNo, sicilNo, 
+                    malzemeTanimi, marka, model, seriNo, durum, 
+                    birim, personel, tedarikTuru, tedarikci, aciklama, tarih
+                ];
 
-            document.getElementById("newDeviceForm").reset();
+                await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "add", sheet: "EnvanterYeni", row: row }) });
+                await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), tarih, kunye, malzemeTanimi, "Envantere Yeni Cihaz Eklendi", personel, durum, "İlk Kayıt Oluşturuldu"] }) });
 
-            loadDevicesFromSheets();
-            loadHistoryFromSheets();
+                document.getElementById("newDeviceForm").reset();
+                loadDevicesFromSheets();
+                loadHistoryFromSheets();
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Envantere Kaydet (Depoya Al)`;
+            }
         }
 
         function renderDevicesTable() {
@@ -728,13 +748,12 @@
                         <td class="p-3"><div><span class="font-bold">${marka}</span> ${model}</div><div class="font-mono text-[10px] text-slate-500">SN: ${seri}</div></td>
                         <td class="p-3"><div class="font-mono font-bold">${demirbas}</div><div class="font-mono text-[10px] text-slate-500">${sicil}</div></td>
                         <td class="p-3">${durumBadge}</td>
-                        <td class="p-3 text-center"><button onclick="openInventoryModal('${id}')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white rounded text-[11px] font-bold shadow-sm">Düzenle</button></td>
+                        <td class="p-3 text-center"><button onclick="openInventoryModal('${id}')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white rounded text-[11px] font-bold shadow-sm transition">Düzenle</button></td>
                     </tr>
                 `;
             }).join('');
         }
 
-        // 2. SEKME: ZİMMET TABLOSU VE TARİHE GÖRE SIRALAMA
         function renderZimmetTable() {
             const query = document.getElementById("zimmetSearchInput").value.toLowerCase();
             const filterType = document.getElementById("zimmetFilterSelect").value;
@@ -757,7 +776,6 @@
                 return matchesQuery && matchesFilter;
             });
 
-            // Sıralama Mantığı (Zimmet Tarihi dahil)
             filtered.sort((a, b) => {
                 if (sortBy === 'tarihDesc') {
                     const tA = new Date(getDevProp(a, 'tarih', 16) || 0).getTime();
@@ -812,7 +830,7 @@
                         <td class="p-3">${personelDisplay}</td>
                         <td class="p-3 font-mono text-xs font-semibold text-slate-600">${tarihDisplay}</td>
                         <td class="p-3 text-center">
-                            <button onclick="openZimmetModal('${id}')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 shadow-sm">
+                            <button onclick="openZimmetModal('${id}')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 shadow-sm transition">
                                 <i class="fa-solid fa-user-pen mr-1"></i> Zimmetle / Değiştir
                             </button>
                         </td>
@@ -854,7 +872,7 @@
                         <td class="p-3 font-semibold">${h.malzemeTanimi || h.col3}</td>
                         <td class="p-3 text-slate-700 font-medium">${h.islem || h.col4}</td>
                         <td class="p-3 font-bold text-slate-900">${h.personel || h.col5}</td>
-                        <td class="p-3 text-center"><button onclick="viewHistoryDetail(${originalIndex})" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded">Detay</button></td>
+                        <td class="p-3 text-center"><button onclick="viewHistoryDetail(${originalIndex})" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded transition">Detay</button></td>
                     </tr>
                 `;
             }).join('');
@@ -905,6 +923,11 @@
             document.getElementById('invEditSeri').value = getDevProp(d, 'seriNo', 9) || '';
             document.getElementById('invEditDemirbas').value = getDevProp(d, 'demirbasNo', 4) || '';
             document.getElementById('invEditSicil').value = getDevProp(d, 'sicilNo', 5) || '';
+            document.getElementById('invEditButce').value = getDevProp(d, 'butceTuru', 2) || '';
+            document.getElementById('invEditEdinme').value = getDevProp(d, 'edinmeYili', 3) || '';
+            document.getElementById('invEditTedarikci').value = getDevProp(d, 'tedarikci', 14) || '';
+            document.getElementById('invEditTedarikTuru').value = getDevProp(d, 'tedarikTuru', 13) || '';
+            document.getElementById('invEditAciklama').value = getDevProp(d, 'aciklama', 15) || '';
             document.getElementById('invEditDurum').value = getDevProp(d, 'durum', 10) || 'Aktif';
             document.getElementById('invEditReason').value = "";
 
@@ -946,9 +969,9 @@
             document.getElementById('editInventoryModal').classList.add('hidden');
             document.getElementById('editZimmetModal').classList.add('hidden');
             document.getElementById('deleteConfirmModal').classList.add('hidden');
+            document.getElementById('hurdaWarningModal').classList.add('hidden');
         }
 
-        // 5. MADDE: CİHAZİ SİLMEK İÇİN SORGULAMA KUTUSU AÇMA
         function openDeleteConfirmModal() {
             document.getElementById('deleteReasonInput').value = "";
             document.getElementById('deleteConfirmModal').classList.remove('hidden');
@@ -976,71 +999,95 @@
             loadHistoryFromSheets();
         }
 
-        // 1. MADDE: ZİMMETLİ CİHAZI HURDAYA AYIRMA ENGELİ
+        // ZİMMETLİ CİHAZI HURDAYA AYIRMA (ŞIK MODAL UYARI İLE)
         async function saveInventoryDeviceWithReason(e) {
             e.preventDefault();
-            const id = document.getElementById('invEditId').value;
-            const d = globalDevices.find(item => String(getDevProp(item, 'id', 0)) === String(id));
-            if(!d) return;
+            const btn = document.getElementById('submitBtnEdit');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> İşleniyor...`;
 
-            const yeniDurum = document.getElementById('invEditDurum').value;
-            const mevculPersonel = getDevProp(d, 'personel', 12) || '';
+            try {
+                const id = document.getElementById('invEditId').value;
+                const d = globalDevices.find(item => String(getDevProp(item, 'id', 0)) === String(id));
+                if(!d) return;
 
-            // Zimmetli Cihazı Hurdaya Ayırmayı Engelleme
-            if (yeniDurum === "Hurda" && mevculPersonel && !mevculPersonel.includes("Zimmetsiz")) {
-                alert(`⚠️ UYARI / ENGEL:\n\nBu cihaz (${mevculPersonel}) personeline zimmetlidir!\n\nGrafiklerde ve kayıtlarda çakışma yaşanmaması için lütfen önce "Zimmet İşlemleri" sekmesinden cihazın zimmetini kaldırıp Depoya alınız, ardından Hurdaya ayırınız.`);
-                return;
+                const yeniDurum = document.getElementById('invEditDurum').value;
+                const mevculPersonel = getDevProp(d, 'personel', 12) || '';
+
+                if (yeniDurum === "Hurda" && mevculPersonel && !mevculPersonel.includes("Zimmetsiz")) {
+                    document.getElementById('hurdaWarningText').innerHTML = `Bu cihaz <b>(${mevculPersonel})</b> personeline zimmetlidir!<br><br>Grafiklerde ve kayıtlarda çakışma yaşanmaması için lütfen önce zimmeti kaldırıp Depoya alınız, ardından hurdaya ayırınız.`;
+                    document.getElementById('hurdaWarningModal').classList.remove('hidden');
+                    return;
+                }
+
+                const kunye = getDevProp(d, 'kunyeNo', 1);
+                const malzeme = document.getElementById('invEditMalzeme').value;
+                const reason = document.getElementById('invEditReason').value.trim() || "Bilgiler Güncellendi";
+                const tarih = new Date().toISOString();
+
+                const updatedRow = [
+                    getDevProp(d, 'id', 0), kunye, 
+                    document.getElementById('invEditButce').value,
+                    document.getElementById('invEditEdinme').value,
+                    document.getElementById('invEditDemirbas').value,
+                    document.getElementById('invEditSicil').value,
+                    malzeme,
+                    document.getElementById('invEditMarka').value,
+                    document.getElementById('invEditModel').value,
+                    document.getElementById('invEditSeri').value,
+                    yeniDurum,
+                    getDevProp(d, 'birim', 11), getDevProp(d, 'personel', 12), 
+                    document.getElementById('invEditTedarikTuru').value,
+                    document.getElementById('invEditTedarikci').value,
+                    document.getElementById('invEditAciklama').value, 
+                    tarih
+                ];
+
+                await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "update", sheet: "EnvanterYeni", id: id, row: updatedRow }) });
+                await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), tarih, kunye, malzeme, "Cihaz Bilgileri / Durum Güncellendi", getDevProp(d, 'personel', 12), yeniDurum, reason] }) });
+
+                closeModals();
+                loadDevicesFromSheets();
+                loadHistoryFromSheets();
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `Kaydet ve Arşive İşle`;
             }
-
-            const kunye = getDevProp(d, 'kunyeNo', 1);
-            const malzeme = document.getElementById('invEditMalzeme').value;
-            const reason = document.getElementById('invEditReason').value.trim() || "Bilgiler Güncellendi";
-            const tarih = new Date().toISOString();
-
-            const updatedRow = [
-                getDevProp(d, 'id', 0), kunye, getDevProp(d, 'butceTuru', 2), getDevProp(d, 'edinmeYili', 3),
-                document.getElementById('invEditDemirbas').value,
-                document.getElementById('invEditSicil').value,
-                malzeme,
-                document.getElementById('invEditMarka').value,
-                document.getElementById('invEditModel').value,
-                document.getElementById('invEditSeri').value,
-                yeniDurum,
-                getDevProp(d, 'birim', 11), getDevProp(d, 'personel', 12), getDevProp(d, 'tedarikTuru', 13), getDevProp(d, 'tedarikci', 14), getDevProp(d, 'aciklama', 15), tarih
-            ];
-
-            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "update", sheet: "EnvanterYeni", id: id, row: updatedRow }) });
-            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), tarih, kunye, malzeme, "Cihaz Bilgileri / Durum Güncellendi", getDevProp(d, 'personel', 12), yeniDurum, reason] }) });
-
-            closeModals();
-            loadDevicesFromSheets();
-            loadHistoryFromSheets();
         }
 
         async function saveZimmetAssignment(e) {
             e.preventDefault();
-            const id = document.getElementById('zimmetEditId').value;
-            const d = globalDevices.find(item => String(getDevProp(item, 'id', 0)) === String(id));
-            if(!d) return;
+            const btn = document.getElementById('submitBtnZimmet');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> İşleniyor...`;
 
-            const isDepo = document.getElementById('depoCheckbox').checked;
-            const birim = isDepo ? "Ayniyat Taşınır Deposu" : document.getElementById('zimmetEditBirim').value;
-            let personel = isDepo ? "Zimmetsiz (Depoda)" : document.getElementById('zimmetEditPersonel').value.trim();
-            if (!personel) personel = "Zimmetsiz (Depoda)";
-            const tarih = new Date().toISOString();
+            try {
+                const id = document.getElementById('zimmetEditId').value;
+                const d = globalDevices.find(item => String(getDevProp(item, 'id', 0)) === String(id));
+                if(!d) return;
 
-            const updatedRow = [
-                getDevProp(d, 'id', 0), getDevProp(d, 'kunyeNo', 1), getDevProp(d, 'butceTuru', 2), getDevProp(d, 'edinmeYili', 3), getDevProp(d, 'demirbasNo', 4), getDevProp(d, 'sicilNo', 5),
-                getDevProp(d, 'malzemeTanimi', 6), getDevProp(d, 'marka', 7), getDevProp(d, 'model', 8), getDevProp(d, 'seriNo', 9), getDevProp(d, 'durum', 10),
-                birim, personel, getDevProp(d, 'tedarikTuru', 13), getDevProp(d, 'tedarikci', 14), getDevProp(d, 'aciklama', 15), tarih
-            ];
+                const isDepo = document.getElementById('depoCheckbox').checked;
+                const birim = isDepo ? "Ayniyat Taşınır Deposu" : document.getElementById('zimmetEditBirim').value;
+                let personel = isDepo ? "Zimmetsiz (Depoda)" : document.getElementById('zimmetEditPersonel').value.trim();
+                if (!personel) personel = "Zimmetsiz (Depoda)";
+                const tarih = new Date().toISOString();
 
-            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "update", sheet: "EnvanterYeni", id: id, row: updatedRow }) });
-            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), tarih, getDevProp(d, 'kunyeNo', 1), getDevProp(d, 'malzemeTanimi', 6), "Zimmet Atandı / Birim Değişti", personel, getDevProp(d, 'durum', 10), "Zimmet / Birim Güncellemesi"] }) });
+                const updatedRow = [
+                    getDevProp(d, 'id', 0), getDevProp(d, 'kunyeNo', 1), getDevProp(d, 'butceTuru', 2), getDevProp(d, 'edinmeYili', 3), getDevProp(d, 'demirbasNo', 4), getDevProp(d, 'sicilNo', 5),
+                    getDevProp(d, 'malzemeTanimi', 6), getDevProp(d, 'marka', 7), getDevProp(d, 'model', 8), getDevProp(d, 'seriNo', 9), getDevProp(d, 'durum', 10),
+                    birim, personel, getDevProp(d, 'tedarikTuru', 13), getDevProp(d, 'tedarikci', 14), getDevProp(d, 'aciklama', 15), tarih
+                ];
 
-            closeModals();
-            loadDevicesFromSheets();
-            loadHistoryFromSheets();
+                await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "update", sheet: "EnvanterYeni", id: id, row: updatedRow }) });
+                await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "add", sheet: "ZimmetGecmisi", row: [Date.now(), tarih, getDevProp(d, 'kunyeNo', 1), getDevProp(d, 'malzemeTanimi', 6), "Zimmet Atandı / Birim Değişti", personel, getDevProp(d, 'durum', 10), "Zimmet / Birim Güncellemesi"] }) });
+
+                closeModals();
+                loadDevicesFromSheets();
+                loadHistoryFromSheets();
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `Zimmetle / Güncelle`;
+            }
         }
 
         function renderQrSelectorList() {
@@ -1174,7 +1221,6 @@
             `;
         }
 
-        // 4. MADDE: TAM SAYFA A4 LİSTE (TÜM VERİ SÜTUNLARI DAHİL)
         function printInventoryA4List() {
             const tbody = document.getElementById('a4PrintTableBody');
             tbody.innerHTML = globalDevices.map((d, index) => `
